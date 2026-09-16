@@ -1,26 +1,164 @@
+@import url("https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f7fafc;
+  --bg2: #eef4f9;
+  --surf: #ffffff;
+  --surf2: #f2f7fc;
+  --ink: #172033;
+  --ink2: #667085;
+  --ink3: #8a98ac;
+  --line: #e2eaf2;
+  --line2: #cfdce9;
+  --brand: #3d9bff;
+  --brand-ink: #1c6fd0;
+  --brand-soft: #eaf5ff;
+  --blue: #3d9bff;
+  --mint: #54cfa5;
+  --btn: #1e74d6;
+  --btn-ink: #ffffff;
+  --ai-card: #2b3a66;
+  --ai-card-ink: #f2f6ff;
+  --ai-on: #b9c6ff;
+  --les: #1d72d2;
+  --voc: #0e8f69;
+  --lis: #0a7e99;
+  --cou: #6a52ee;
+  --pra: #ce543b;
+  --ai: #4a58cc;
+  --les-t: #eaf5ff;
+  --voc-t: #e8faf3;
+  --lis-t: #e4f6fb;
+  --cou-t: #f1eefe;
+  --pra-t: #fff0ec;
+  --ai-t: #edeffe;
+  --ok: #0e8f69;
+  --ok-t: #e8faf3;
+  --no: #d14a33;
+  --no-t: #feece8;
+  --sh: 0 1px 2px rgba(23, 32, 51, 0.05), 0 10px 28px -16px rgba(23, 32, 51, 0.2);
+  --sh2: 0 2px 4px rgba(23, 32, 51, 0.06), 0 22px 50px -22px rgba(23, 32, 51, 0.3);
+  --r: 18px;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-serif: "Newsreader", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-arabic: "IBM Plex Sans Arabic", "IBM Plex Sans", sans-serif;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d1726;
+  --bg2: #0a1220;
+  --surf: #142238;
+  --surf2: #1b2c45;
+  --ink: #f4f8fc;
+  --ink2: #a7b5c8;
+  --ink3: #7e8ea5;
+  --line: #293c57;
+  --line2: #375072;
+  --brand: #62b3ff;
+  --brand-ink: #9bceff;
+  --brand-soft: #17304d;
+  --blue: #62b3ff;
+  --mint: #67d8b3;
+  --btn: #62b3ff;
+  --btn-ink: #0d1726;
+  --ai-card: #1e2a4e;
+  --ai-card-ink: #f4f8fc;
+  --ai-on: #a9b8ff;
+  --les: #62b3ff;
+  --voc: #67d8b3;
+  --lis: #5bc8e0;
+  --cou: #a99bff;
+  --pra: #ff9e86;
+  --ai: #96a4ff;
+  --les-t: #17304d;
+  --voc-t: #123a31;
+  --lis-t: #0f3643;
+  --cou-t: #262247;
+  --pra-t: #3b2723;
+  --ai-t: #1f2749;
+  --ok: #67d8b3;
+  --ok-t: #123a31;
+  --no: #ff9e86;
+  --no-t: #3b2723;
+  --sh: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 30px -16px rgba(0, 0, 0, 0.55);
+  --sh2: 0 2px 6px rgba(0, 0, 0, 0.35), 0 26px 56px -24px rgba(0, 0, 0, 0.65);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-surface: var(--surf);
+  --color-surface2: var(--surf2);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-ink3: var(--ink3);
+  --color-line: var(--line);
+  --color-line2: var(--line2);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-blue: var(--blue);
+  --color-mint: var(--mint);
+  --color-btn: var(--btn);
+  --color-btn-ink: var(--btn-ink);
+  --color-ai-card: var(--ai-card);
+  --color-ai-card-ink: var(--ai-card-ink);
+  --color-ai-on: var(--ai-on);
+  --color-les: var(--les);
+  --color-voc: var(--voc);
+  --color-lis: var(--lis);
+  --color-cou: var(--cou);
+  --color-pra: var(--pra);
+  --color-ai: var(--ai);
+  --color-les-t: var(--les-t);
+  --color-voc-t: var(--voc-t);
+  --color-lis-t: var(--lis-t);
+  --color-cou-t: var(--cou-t);
+  --color-pra-t: var(--pra-t);
+  --color-ai-t: var(--ai-t);
+  --color-ok: var(--ok);
+  --color-ok-t: var(--ok-t);
+  --color-no: var(--no);
+  --color-no-t: var(--no-t);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+  --font-arabic: var(--font-arabic);
+  --radius-app: var(--r);
+  --shadow-soft: var(--sh);
+  --shadow-soft-strong: var(--sh2);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-wrap: pretty;
+}
+
+html[dir="rtl"] body {
+  font-family: var(--font-arabic);
+}
+
+::selection {
+  background: var(--brand-soft);
+  color: var(--ink);
 }
