@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 
 const learningWays = [
   {
@@ -49,67 +46,6 @@ const waveform = [
 ];
 
 export default function Home() {
-  const correctAnswer = "have been studying";
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [explanation, setExplanation] = useState("");
-  const [loadingExplanation, setLoadingExplanation] = useState(false);
-
-  const handleAnswer = (answer: string) => {
-    const nextIsCorrect = answer === correctAnswer;
-    setSelectedAnswer(answer);
-    setIsCorrect(nextIsCorrect);
-    setShowExplanation(false);
-    setExplanation("");
-
-    if (nextIsCorrect) {
-      const spokenText = "I have been studying English for two years now.";
-
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(spokenText);
-        utterance.lang = "en-US";
-        utterance.rate = 0.92;
-        window.speechSynthesis.speak(utterance);
-      }
-    }
-  };
-
-  const handleExplain = async () => {
-    setLoadingExplanation(true);
-    setShowExplanation(true);
-
-    try {
-      const response = await fetch("/api/tutor", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question:
-            "Explain why the correct answer is \"have been studying\" in the sentence \"I have been studying English for two years now.\" Keep it short, friendly, and easy to understand.",
-          mode: "Explain the grammar",
-          history: [],
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok || typeof data.answer !== "string") {
-        throw new Error(data.error || "Unable to explain the answer.");
-      }
-
-      setExplanation(data.answer);
-    } catch (error) {
-      setExplanation(
-        error instanceof Error
-          ? error.message
-          : "I couldn’t explain this answer right now.",
-      );
-    } finally {
-      setLoadingExplanation(false);
-    }
-  };
-
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       {/* Hero */}
@@ -221,77 +157,23 @@ export default function Home() {
 
             <div className="mt-7 flex flex-wrap items-end gap-x-3 gap-y-4 font-display text-3xl text-[var(--ink)] sm:text-4xl">
               <span>I</span>
-              <span
-                className={`inline-flex h-11 min-w-16 items-center justify-center rounded-b-xl border-b-2 px-3 font-sans text-xl tracking-[0.2em] ${
-                  selectedAnswer === null
-                    ? "border-[var(--line2)] text-[var(--ink3)]"
-                    : isCorrect
-                      ? "border-[#0E8F69] bg-[#E8FAF3] text-[#0E8F69]"
-                      : "border-[#D14A33] bg-[#FEECE8] text-[#D14A33]"
-                }`}
-              >
-                {selectedAnswer ?? "...."}
+              <span className="inline-flex h-11 min-w-16 items-center justify-center rounded-b-xl border-b-2 border-[var(--line2)] px-3 font-sans text-xl tracking-[0.2em] text-[var(--ink3)]">
+                ....
               </span>
               <span>English for two years now.</span>
             </div>
 
             <div className="mt-6 flex flex-wrap gap-2">
-              {["have been studying", "am studying", "studied"].map((answer) => {
-                const isSelected = selectedAnswer === answer;
-                const isCorrectChoice = answer === correctAnswer;
-
-                return (
-                  <button
-                    key={answer}
-                    type="button"
-                    onClick={() => handleAnswer(answer)}
-                    className={`rounded-xl border px-5 py-3 text-sm font-semibold transition ${
-                      selectedAnswer === null
-                        ? "border-[var(--line)] bg-[var(--surf2)] text-[var(--ink)] hover:-translate-y-0.5 hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]"
-                        : isSelected
-                          ? isCorrectChoice
-                            ? "border-[#0E8F69] bg-[#E8FAF3] text-[#0E8F69]"
-                            : "border-[#D14A33] bg-[#FEECE8] text-[#D14A33]"
-                          : isCorrectChoice
-                            ? "border-[#0E8F69] bg-[#E8FAF3] text-[#0E8F69]"
-                            : "border-[var(--line)] bg-[var(--surf2)] text-[var(--ink)] opacity-80"
-                    } cursor-pointer`}
-                  >
-                    {answer}
-                  </button>
-                );
-              })}
+              {["have been studying", "am studying", "studied"].map((answer) => (
+                <button
+                  key={answer}
+                  type="button"
+                  className="rounded-xl border border-[var(--line)] bg-[var(--surf2)] px-5 py-3 text-sm font-semibold text-[var(--ink)] transition hover:-translate-y-0.5 hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]"
+                >
+                  {answer}
+                </button>
+              ))}
             </div>
-
-            {selectedAnswer && !isCorrect && (
-              <div className="mt-5 rounded-2xl border border-[#F5D4CF] bg-[#FFF4F2] p-4 text-sm text-[#8A2E26]">
-                <p className="font-semibold">Not quite.</p>
-                <p className="mt-2">Would you like the AI to explain it?</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={handleExplain}
-                    disabled={loadingExplanation}
-                    className="rounded-full bg-[#0E8F69] px-3 py-1.5 text-xs font-semibold text-white disabled:opacity-60"
-                  >
-                    {loadingExplanation ? "Thinking..." : "Explain it"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowExplanation(false)}
-                    className="rounded-full border border-[#D14A33] bg-white px-3 py-1.5 text-xs font-semibold text-[#D14A33]"
-                  >
-                    No thanks
-                  </button>
-                </div>
-
-                {showExplanation && (
-                  <div className="mt-4 rounded-xl border border-[#F0C3BC] bg-white/80 p-3 text-sm leading-6 text-[var(--ink)]">
-                    {loadingExplanation ? "Loading explanation..." : explanation}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="mt-16">
