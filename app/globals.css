@@ -296,6 +296,11 @@ a {
   border-color: var(--line2);
 }
 
+.sada-speaking {
+  color: #0e8f69 !important;
+  transition: color 0.2s ease;
+}
+
 /* ================================
    BUTTON
    ================================ */
