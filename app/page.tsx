@@ -1,4 +1,7 @@
 import Link from "next/link";
+import DailyLesson from "./components/DailyLesson";
+import ListeningCard from "./components/ListeningCard";
+import ScrollReveal from "./components/ScrollReveal";
 
 const learningWays = [
   {
@@ -53,7 +56,7 @@ export default function Home() {
         <div className="absolute right-[-5%] top-24 h-80 w-80 rounded-full bg-[#EAF8FC] blur-2xl opacity-90" />
         <div className="absolute -left-32 bottom-0 h-64 w-64 rounded-full bg-[#E8FAF3] blur-3xl opacity-50" />
 
-        <div className="relative grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
+        <ScrollReveal className="relative grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
           {/* Left */}
           <div className="max-w-[570px]">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-[#EAF5FF] px-3 py-1.5 text-xs font-semibold text-[#2677C8]">
@@ -97,86 +100,21 @@ export default function Home() {
           </div>
 
           {/* Listening card */}
-          <div className="relative lg:pt-5">
-            <div className="absolute -inset-5 rounded-[36px] bg-[#EAF8FC] opacity-70 blur-2xl" />
-            <div className="sada-card relative overflow-hidden rounded-[26px] p-6 sm:p-7">
-              <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-[0.16em] text-[#147D9A]">
-                <span>Listening</span>
-                <span className="font-mono tracking-normal text-[var(--ink3)]">0:06</span>
-              </div>
-
-              <div className="mt-4 flex items-center gap-3 sm:gap-4">
-                <button
-                  type="button"
-                  aria-label="Play listening example"
-                  data-speak="I will have a coffee and a glass of water please"
-                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#1187A4] text-2xl text-white shadow-[0_8px_18px_rgba(17,135,164,0.22)] transition hover:scale-105"
-                >
-                  <span className="ml-1">▶</span>
-                </button>
-                <div className="flex h-12 flex-1 items-center justify-between gap-1 overflow-hidden">
-                  {waveform.map((height, index) => (
-                    <span
-                      key={`${height}-${index}`}
-                      className="w-1.5 shrink-0 rounded-full bg-[#8ABDD0]"
-                      style={{ height: `${height}px` }}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <p className="mt-5 font-display text-[1.2rem] leading-tight text-[#283348] sm:text-[1.55rem]">
-                I will have a coffee and a glass of water please
-              </p>
-
-              <div className="mt-5 border-t border-[var(--line)] pt-4 text-xs font-medium text-[#95A8BE]">
-                Tap any word to hear it on its own.
-              </div>
-            </div>
-          </div>
-        </div>
+          <ListeningCard
+            sentence="I will have a coffee and a glass of water please"
+            waveform={waveform}
+          />
+        </ScrollReveal>
       </section>
 
       {/* Daily lesson */}
       <section className="border-y border-[var(--line)] bg-[var(--bg2)]">
         <div className="page-container py-12 sm:py-16">
-          <div className="sada-card overflow-hidden rounded-[26px] p-6 sm:p-8">
-            <div className="flex items-start justify-between gap-6">
-              <div>
-                <h2 className="font-display text-3xl font-medium sm:text-4xl">
-                  Learn something in 60 seconds
-                </h2>
-                <p className="mt-1 text-sm text-[var(--ink2)] sm:text-base">
-                  One sentence, one choice, one small thing you keep.
-                </p>
-              </div>
-              <span className="shrink-0 rounded-full bg-[var(--brand-soft)] px-3 py-1 text-xs font-medium text-[var(--ink3)]">
-                1&nbsp; / &nbsp;3
-              </span>
-            </div>
+          <ScrollReveal>
+            <DailyLesson />
+          </ScrollReveal>
 
-            <div className="mt-7 flex flex-wrap items-end gap-x-3 gap-y-4 font-display text-3xl text-[var(--ink)] sm:text-4xl">
-              <span>I</span>
-              <span className="inline-flex h-11 min-w-16 items-center justify-center rounded-b-xl border-b-2 border-[var(--line2)] px-3 font-sans text-xl tracking-[0.2em] text-[var(--ink3)]">
-                ....
-              </span>
-              <span>English for two years now.</span>
-            </div>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              {["have been studying", "am studying", "studied"].map((answer) => (
-                <button
-                  key={answer}
-                  type="button"
-                  className="rounded-xl border border-[var(--line)] bg-[var(--surf2)] px-5 py-3 text-sm font-semibold text-[var(--ink)] transition hover:-translate-y-0.5 hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]"
-                >
-                  {answer}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-16">
+          <ScrollReveal className="mt-16">
             <h2 className="font-display text-4xl font-medium sm:text-5xl">
               Six ways to learn
             </h2>
@@ -184,13 +122,13 @@ export default function Home() {
               Each one is a different kind of attention. Pick the one that
               fits the next ten minutes.
             </p>
-          </div>
+          </ScrollReveal>
 
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ScrollReveal className="scroll-stagger mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {learningWays.map((way, index) => (
               <Link
                 key={way.title}
-                href={`/${way.title.toLowerCase()}`}
+                href="/practice"
                 className={`group rounded-[22px] border border-[var(--line)] p-6 shadow-[var(--sh)] transition duration-300 hover:-translate-y-1 hover:shadow-[var(--sh2)] ${index === 0 ? "sm:col-span-2 lg:col-span-2" : ""}`}
                 style={{ backgroundColor: way.bg }}
               >
@@ -246,7 +184,7 @@ export default function Home() {
                 )}
               </Link>
             ))}
-          </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -255,7 +193,7 @@ export default function Home() {
         <div className="page-container py-10 sm:py-14">
           <div className="grid gap-4 lg:grid-cols-[0.95fr_2fr] lg:grid-rows-[auto_auto]">
             <Link
-              href="/lessons/ordering-food"
+              href="/lessons"
               className="group sada-card flex min-h-[255px] flex-col justify-between rounded-[24px] p-6 sm:p-7"
             >
               <div>
@@ -293,17 +231,17 @@ export default function Home() {
 
             <Link
               href="/ai-tutor"
-              className="group flex min-h-[255px] flex-col justify-between rounded-[24px] bg-[var(--ai-card)] p-6 text-white shadow-[var(--sh2)] transition hover:-translate-y-1 sm:p-7"
+              className="ai-tutor-card group flex min-h-[258px] flex-col justify-between rounded-[24px] bg-[#2F4277] p-[18px] text-white shadow-[var(--sh2)] transition hover:-translate-y-1 sm:p-[18px]"
             >
               <div>
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#B9C6FF]">
+                <p className="ai-tutor-label font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#B9C6FF]">
                   <span className="mr-2 inline-block h-2 w-2 rounded-full bg-current" />
                   AI Tutor
                 </p>
-                <h2 className="mt-4 max-w-[650px] font-display text-3xl font-medium leading-tight sm:text-4xl">
+                <h2 className="ai-tutor-title mt-3 max-w-[650px] font-display text-[1.65rem] font-medium leading-[1.12] text-[#F4F8FC]">
                   “Why do we say “I have been” instead of “I was” here?”
                 </h2>
-                <div className="mt-5 max-w-[620px] rounded-2xl bg-white/15 px-4 py-3 text-sm">
+                <div className="mt-5 max-w-[710px] rounded-2xl bg-white/15 px-4 py-3 text-sm">
                   <p className="flex items-center gap-3 text-white/55 line-through">
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#D14A33] text-[11px] text-[#512321]">
                       ×
@@ -319,7 +257,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <span className="mt-6 inline-flex h-11 w-fit items-center rounded-full bg-white px-5 text-sm font-semibold text-[#2B3A66] transition group-hover:translate-x-1">
+              <span className="mt-5 inline-flex h-11 w-fit items-center rounded-full bg-white px-5 text-sm font-semibold text-[#2B3A66] transition group-hover:translate-x-1">
                 Practice with AI&nbsp; →
               </span>
             </Link>
@@ -350,7 +288,7 @@ export default function Home() {
             </Link>
 
             <Link
-              href="/courses/english-for-travel"
+              href="/courses"
               className="group min-h-[210px] rounded-[24px] bg-[#F1EEFE] p-6 shadow-[var(--sh)] transition hover:-translate-y-1 hover:shadow-[var(--sh2)] sm:p-7"
             >
               <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6A52EE]">
@@ -375,7 +313,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-8 border-t border-[var(--line)] pt-8 sm:grid-cols-[0.9fr_1.6fr] sm:gap-12">
+          <ScrollReveal className="mt-10 grid gap-8 border-t border-[var(--line)] pt-8 sm:grid-cols-[0.9fr_1.6fr] sm:gap-12">
             <div className="max-w-[270px]">
               <Link href="/" className="flex items-center gap-2.5">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#3D9BFF] text-xs font-semibold text-white">
@@ -413,7 +351,7 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </footer>
     </main>

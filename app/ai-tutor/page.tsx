@@ -26,7 +26,13 @@ const prompts = [
 
 export default function AiTutorPage() {
   const [activeMode, setActiveMode] = useState("Explain something");
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState(() => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    return new URLSearchParams(window.location.search).get("question") || "";
+  });
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
