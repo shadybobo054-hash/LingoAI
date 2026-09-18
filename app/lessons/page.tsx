@@ -12,6 +12,7 @@ type Lesson = {
   steps: number;
   color: string;
   href: string;
+  completed?: boolean;
 };
 
 const levels = ["All levels", "Beginner", "Intermediate", "Advanced"];
@@ -60,37 +61,39 @@ const lessons: Lesson[] = [
     href: "/lessons/small-talk-at-work",
   },
   {
-    title: "A better morning routine",
+    title: "Phone calls and voicemail",
     level: "Intermediate",
     description:
-      "Talk about habits, plans and the little routines that shape an ordinary day.",
-    tags: ["Grammar", "Speaking", "Vocabulary"],
+      "No faces, no gestures - just the phrases that keep a phone call from stalling.",
+    tags: ["Listening", "Practice"],
     minutes: 8,
-    steps: 6,
+    steps: 4,
     color: "#0E8F69",
-    href: "/lessons/morning-routine",
+    href: "/lessons/phone-calls",
   },
   {
-    title: "Booking a hotel room",
+    title: "Giving your opinion kindly",
     level: "Intermediate",
     description:
-      "Ask the right questions, understand the details, and check in without hesitation.",
-    tags: ["Travel", "Listening", "Practice"],
+      "Agree, half-agree and disagree without sounding harsh - the softeners native speakers lean on.",
+    tags: ["Vocabulary", "Practice"],
     minutes: 10,
-    steps: 6,
+    steps: 4,
     color: "#CE543B",
-    href: "/lessons/booking-a-hotel",
+    href: "/lessons/giving-your-opinion",
+    completed: true,
   },
   {
-    title: "Explaining a tech problem",
+    title: "Explaining a problem to support",
     level: "Advanced",
     description:
-      "Describe what went wrong, suggest a fix, and keep a technical conversation moving.",
-    tags: ["Technology", "Speaking", "Grammar"],
-    minutes: 12,
-    steps: 7,
+      "Describe what broke, when, and what you already tried - in the order support actually needs it.",
+    tags: ["Vocabulary", "Practice"],
+    minutes: 11,
+    steps: 4,
     color: "#565AD7",
-    href: "/lessons/tech-problem",
+    href: "/lessons/explaining-a-problem",
+    completed: true,
   },
 ];
 
@@ -154,9 +157,16 @@ export default function LessonsPage() {
               key={lesson.title}
               className="sada-card flex min-h-[286px] flex-col rounded-[22px] p-5 sm:p-6"
             >
-              <div className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.08em]" style={{ color: lesson.color }}>
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: lesson.color }} />
-                {lesson.level}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.08em]" style={{ color: lesson.color }}>
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: lesson.color }} />
+                  {lesson.level}
+                </div>
+                {lesson.completed && (
+                  <span className="rounded-full bg-[#E8FAF3] px-3 py-1 text-xs font-semibold text-[#0E8F69]">
+                    ✓ Completed
+                  </span>
+                )}
               </div>
 
               <h2 className="mt-4 font-display text-[1.75rem] font-medium leading-tight">
@@ -188,10 +198,9 @@ export default function LessonsPage() {
                 </span>
                 <Link
                   href={lesson.href}
-                  className="inline-flex h-9 items-center rounded-full px-4 text-xs font-semibold text-white transition hover:-translate-y-0.5"
-                  style={{ backgroundColor: lesson.color }}
+                  className="inline-flex h-9 items-center rounded-full bg-[#2477D1] px-4 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#1D69BB]"
                 >
-                  Start →
+                  {lesson.completed ? "Review again" : "Start"} →
                 </Link>
               </div>
             </article>
