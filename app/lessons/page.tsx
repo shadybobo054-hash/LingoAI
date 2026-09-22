@@ -16,6 +16,7 @@ type Lesson = {
 };
 
 const levels = ["All levels", "Beginner", "Intermediate", "Advanced"];
+
 const topics = [
   "Everything",
   "Daily life",
@@ -104,6 +105,7 @@ export default function LessonsPage() {
   const visibleLessons = lessons.filter((lesson) => {
     const matchesLevel =
       activeLevel === "All levels" || lesson.level === activeLevel;
+
     const matchesTopic =
       activeTopic === "Everything" || lesson.tags.includes(activeTopic);
 
@@ -113,16 +115,19 @@ export default function LessonsPage() {
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
       <section className="page-container pb-16 pt-10 sm:pb-24 sm:pt-14">
+        {/* Header */}
         <div className="max-w-[600px]">
           <h1 className="font-display text-5xl font-medium tracking-[-0.03em] sm:text-6xl">
             Lessons
           </h1>
+
           <p className="mt-3 max-w-[540px] text-base leading-6 text-[var(--ink2)] sm:text-lg">
             Short, finishable, and built around one situation each. Pick a
             level, pick a life.
           </p>
         </div>
 
+        {/* Levels */}
         <div className="mt-7 flex flex-wrap gap-2">
           {levels.map((level) => (
             <button
@@ -130,13 +135,18 @@ export default function LessonsPage() {
               type="button"
               aria-pressed={activeLevel === level}
               onClick={() => setActiveLevel(level)}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${activeLevel === level ? "border-[#2477D1] bg-[#2477D1] text-white" : "border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[#2477D1] hover:text-[#2477D1]"}`}
+              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                activeLevel === level
+                  ? "border-[#2477D1] bg-[#2477D1] text-white"
+                  : "border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[#2477D1] hover:text-[#2477D1]"
+              }`}
             >
               {level}
             </button>
           ))}
         </div>
 
+        {/* Topics */}
         <div className="mt-2 flex flex-wrap gap-2">
           {topics.map((topic) => (
             <button
@@ -144,72 +154,95 @@ export default function LessonsPage() {
               type="button"
               aria-pressed={activeTopic === topic}
               onClick={() => setActiveTopic(topic)}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${activeTopic === topic ? "border-[#2477D1] bg-[#2477D1] text-white" : "border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[#2477D1] hover:text-[#2477D1]"}`}
+              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                activeTopic === topic
+                  ? "border-[#2477D1] bg-[#2477D1] text-white"
+                  : "border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[#2477D1] hover:text-[#2477D1]"
+              }`}
             >
               {topic}
             </button>
           ))}
         </div>
 
+        {/* Course Cards */}
         <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {visibleLessons.map((lesson) => (
-            <article
+            <Link
               key={lesson.title}
-              className="sada-card flex min-h-[286px] flex-col rounded-[22px] p-5 sm:p-6"
+              href={lesson.href}
+              className="group block rounded-[22px] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2477D1] focus-visible:ring-offset-2"
             >
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.08em]" style={{ color: lesson.color }}>
-                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: lesson.color }} />
-                  {lesson.level}
-                </div>
-                {lesson.completed && (
-                  <span className="rounded-full bg-[#E8FAF3] px-3 py-1 text-xs font-semibold text-[#0E8F69]">
-                    ✓ Completed
-                  </span>
-                )}
-              </div>
-
-              <h2 className="mt-4 font-display text-[1.75rem] font-medium leading-tight">
-                {lesson.title}
-              </h2>
-
-              <p className="mt-4 text-sm leading-6 text-[var(--ink2)]">
-                {lesson.description}
-              </p>
-
-              <div className="mt-4 flex flex-wrap gap-2">
-                {lesson.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full px-3 py-1 text-xs font-semibold"
-                    style={{
-                      backgroundColor: `${lesson.color}16`,
-                      color: lesson.color,
-                    }}
+              <article className="sada-card flex min-h-[286px] flex-col rounded-[22px] p-5 transition duration-200 group-hover:-translate-y-1 group-hover:shadow-[var(--sh2)] sm:p-6">
+                {/* Level */}
+                <div className="flex items-center justify-between gap-3">
+                  <div
+                    className="flex items-center gap-2 font-mono text-[11px] font-semibold uppercase tracking-[0.08em]"
+                    style={{ color: lesson.color }}
                   >
-                    {tag}
-                  </span>
-                ))}
-              </div>
+                    <span
+                      className="h-2 w-2 rounded-full"
+                      style={{ backgroundColor: lesson.color }}
+                    />
 
-              <div className="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
-                <span className="font-mono text-xs text-[var(--ink3)]">
-                  {lesson.minutes} min · {lesson.steps} steps
-                </span>
-                <Link
-                  href={lesson.href}
-                  className="inline-flex h-9 items-center rounded-full bg-[#2477D1] px-4 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#1D69BB]"
-                >
-                  {lesson.completed ? "Review again" : "Start"} →
-                </Link>
-              </div>
-            </article>
+                    {lesson.level}
+                  </div>
+
+                  {lesson.completed && (
+                    <span className="rounded-full bg-[#E8FAF3] px-3 py-1 text-xs font-semibold text-[#0E8F69]">
+                      ✓ Completed
+                    </span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h2 className="mt-4 font-display text-[1.75rem] font-medium leading-tight transition group-hover:text-[#2477D1]">
+                  {lesson.title}
+                </h2>
+
+                {/* Description */}
+                <p className="mt-4 text-sm leading-6 text-[var(--ink2)]">
+                  {lesson.description}
+                </p>
+
+                {/* Tags */}
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {lesson.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full px-3 py-1 text-xs font-semibold"
+                      style={{
+                        backgroundColor: `${lesson.color}16`,
+                        color: lesson.color,
+                      }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Bottom */}
+                <div className="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
+                  <span className="font-mono text-xs text-[var(--ink3)]">
+                    {lesson.minutes} min · {lesson.steps} steps
+                  </span>
+
+                  <span className="inline-flex h-9 items-center rounded-full bg-[#2477D1] px-4 text-xs font-semibold text-white transition group-hover:bg-[#1D69BB]">
+                    {lesson.completed ? "Review again" : "Start"} →
+                  </span>
+                </div>
+              </article>
+            </Link>
           ))}
         </div>
 
+        {/* Empty State */}
         {visibleLessons.length === 0 && (
           <div className="sada-card mt-7 p-8 text-center">
-            <h2 className="font-display text-3xl font-medium">No lessons yet</h2>
+            <h2 className="font-display text-3xl font-medium">
+              No lessons yet
+            </h2>
+
             <p className="mt-2 text-[var(--ink2)]">
               Try another level or topic to find your next lesson.
             </p>
@@ -217,6 +250,7 @@ export default function LessonsPage() {
         )}
       </section>
 
+      {/* Footer */}
       <footer className="border-t border-[var(--line)] bg-[var(--bg2)]">
         <div className="page-container grid gap-8 py-10 sm:grid-cols-[0.9fr_1.6fr] sm:gap-12 sm:py-14">
           <div className="max-w-[270px]">
@@ -224,10 +258,12 @@ export default function LessonsPage() {
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#3D9BFF] text-xs font-semibold text-white">
                 ●
               </span>
+
               <span className="font-display text-lg font-semibold text-[var(--ink)]">
                 Sada
               </span>
             </Link>
+
             <p className="mt-3 text-sm leading-5 text-[var(--ink3)]">
               A calm place to learn languages. Built around listening,
               curiosity and short honest feedback.
@@ -238,6 +274,7 @@ export default function LessonsPage() {
             <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ink3)]">
               Languages we teach
             </p>
+
             <div className="mt-3 flex flex-wrap gap-2">
               {[
                 { name: "English", status: "live", active: true },
@@ -248,9 +285,14 @@ export default function LessonsPage() {
               ].map((language) => (
                 <span
                   key={language.name}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium ${language.active ? "border-[#D6E9FA] bg-[#F5FAFF] text-[#2477D1]" : "border-[var(--line)] bg-transparent text-[var(--ink2)]"}`}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+                    language.active
+                      ? "border-[#D6E9FA] bg-[#F5FAFF] text-[#2477D1]"
+                      : "border-[var(--line)] bg-transparent text-[var(--ink2)]"
+                  }`}
                 >
                   {language.name}
+
                   <span className="ml-1.5 text-[var(--ink3)]">
                     {language.status}
                   </span>

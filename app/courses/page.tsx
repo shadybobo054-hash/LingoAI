@@ -1,189 +1,228 @@
+
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 type Course = {
   title: string;
-  level: "Beginner" | "Intermediate";
-  lessons: number;
-  duration: string;
   description: string;
-  tags: string[];
+  level: "Beginner" | "Intermediate" | "Advanced";
+  lessons: number;
+  minutes: number;
+  icon: string;
   color: string;
-  background?: string;
-  href: string;
-  wide?: boolean;
+  slug: string;
 };
 
 const courses: Course[] = [
   {
-    title: "English for travel",
+    title: "English for Travel",
+    description:
+      "Learn practical English for airports, hotels, restaurants, transportation, and everyday travel situations.",
     level: "Beginner",
-    lessons: 6,
-    duration: "1h 20m",
-    description: "From the check-in desk to the hotel lobby to the restaurant table - the sentences you will actually need on the way.",
-    tags: ["Listening", "Vocabulary", "Practice"],
-    color: "#0A7E99",
-    background: "#E4F6FB",
-    href: "/courses/english-for-travel",
-    wide: true,
+    lessons: 12,
+    minutes: 120,
+    icon: "✈️",
+    color: "bg-cyan-50",
+    slug: "english-for-travel",
   },
   {
-    title: "English for work",
+    title: "English for Work",
+    description:
+      "Build useful English skills for meetings, emails, presentations, teamwork, and workplace communication.",
     level: "Intermediate",
-    lessons: 8,
-    duration: "2h 05m",
-    description: "Meetings, updates, disagreement and email tone - the register that makes you sound calm and competent.",
-    tags: ["Listening", "Practice"],
-    color: "#6A52EE",
-    href: "/courses/english-for-work",
+    lessons: 15,
+    minutes: 150,
+    icon: "💼",
+    color: "bg-amber-50",
+    slug: "english-for-work",
   },
   {
-    title: "Everyday conversations",
+    title: "Everyday Conversations",
+    description:
+      "Practice natural English conversations for everyday situations, from meeting people to talking about your daily life.",
     level: "Beginner",
-    lessons: 7,
-    duration: "1h 40m",
-    description: "The unremarkable conversations that fill a day - and the small phrases that keep them moving.",
-    tags: ["Speaking", "Vocabulary"],
-    color: "#2477D1",
-    href: "/courses/everyday-conversations",
-  },
-  {
-    title: "Grammar essentials",
-    level: "Intermediate",
     lessons: 10,
-    duration: "2h 30m",
-    description: "Only the grammar that changes meaning. Tenses you actually use, articles, and the difference between since and for.",
-    tags: ["Grammar", "Practice", "Review"],
-    color: "#0E8F69",
-    href: "/courses/grammar-essentials",
-    wide: true,
+    minutes: 100,
+    icon: "💬",
+    color: "bg-emerald-50",
+    slug: "everyday-conversations",
   },
   {
-    title: "News in plain English",
+    title: "News in Plain English",
+    description:
+      "Improve your English by reading and understanding real-world news using clear and accessible English.",
     level: "Intermediate",
-    lessons: 5,
-    duration: "1h 10m",
-    description: "Build the vocabulary and listening confidence to follow the stories people are talking about.",
-    tags: ["Listening", "Reading"],
-    color: "#CE543B",
-    href: "/courses/news-in-plain-english",
+    lessons: 14,
+    minutes: 140,
+    icon: "📰",
+    color: "bg-violet-50",
+    slug: "news-in-plain-english",
   },
 ];
 
+const levels = ["All levels", "Beginner", "Intermediate", "Advanced"];
+
 export default function CoursesPage() {
-  const [activeLevel, setActiveLevel] = useState("Everything");
-
-  const visibleCourses = courses.filter(
-    (course) => activeLevel === "Everything" || course.level === activeLevel,
-  );
-
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
-      <section className="page-container pb-16 pt-10 sm:pb-24 sm:pt-14">
-        <div className="max-w-[650px]">
-          <h1 className="font-display text-5xl font-medium tracking-[-0.03em] sm:text-6xl">
-            Courses &amp; videos
-          </h1>
-          <p className="mt-3 max-w-[590px] text-base leading-6 text-[var(--ink2)] sm:text-lg">
-            Longer arcs, built from the same lessons and listening. Start
-            anywhere - nothing is locked.
-          </p>
-        </div>
+    <main className="min-h-screen bg-[#f7f7f4] px-5 pb-20 pt-10 sm:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl">
+        {/* Header */}
+        <section className="mb-10">
+          <div className="max-w-3xl">
+            <span className="inline-flex rounded-full bg-[#e8f9fc] px-4 py-2 text-sm font-bold text-[#18b9cf]">
+              LEARNING COURSES
+            </span>
 
-        <div className="mt-7 flex flex-wrap gap-2">
-          {["Everything", "Beginner", "Intermediate"].map((level) => (
-            <button
-              key={level}
-              type="button"
-              aria-pressed={activeLevel === level}
-              onClick={() => setActiveLevel(level)}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${activeLevel === level ? "border-[#6A52EE] bg-[#6A52EE] text-white" : "border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[#6A52EE] hover:text-[#6A52EE]"}`}
-            >
-              {level}
-            </button>
-          ))}
-        </div>
+            <h1 className="mt-5 text-4xl font-black tracking-tight text-[#172033] sm:text-5xl lg:text-6xl">
+              Learn English your way.
+            </h1>
 
-        <div className="mt-7 grid gap-4 sm:grid-cols-2">
-          {visibleCourses.map((course) => (
-            <Link
-              key={course.title}
-              href={course.href}
-              className={`group sada-card flex min-h-[248px] flex-col rounded-[24px] p-6 sm:p-7 ${course.wide ? "sm:col-span-2" : ""}`}
-              style={{ backgroundColor: course.background }}
-            >
-              <div className="flex items-center justify-between gap-5">
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: course.color }}>
-                  <span className="mr-2 inline-block h-2 w-2 rounded-full" style={{ backgroundColor: course.color }} />
-                  {course.level}
-                </p>
-                <span className="font-mono text-xs text-[var(--ink3)]">
-                  {course.lessons} lessons · {course.duration}
-                </span>
-              </div>
-
-              <h2 className="mt-4 max-w-[620px] font-display text-3xl font-medium leading-tight sm:text-4xl">
-                {course.title}
-              </h2>
-              <p className="mt-4 max-w-[650px] text-sm leading-6 text-[var(--ink2)] sm:text-base">
-                {course.description}
-              </p>
-
-              <div className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-7">
-                <div className="flex flex-wrap gap-2">
-                  {course.tags.map((tag) => (
-                    <span key={tag} className="rounded-full border border-white/80 bg-white/75 px-3 py-1 text-xs font-medium text-[var(--ink2)]">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <span className="text-sm font-semibold transition group-hover:translate-x-1" style={{ color: course.color }}>
-                  Start course&nbsp; →
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {visibleCourses.length === 0 && (
-          <div className="sada-card mt-7 p-8 text-center">
-            <h2 className="font-display text-3xl font-medium">No courses yet</h2>
-            <p className="mt-2 text-[var(--ink2)]">Choose another level to see more courses.</p>
-          </div>
-        )}
-      </section>
-
-      <footer className="border-t border-[var(--line)] bg-[var(--bg2)]">
-        <div className="page-container grid gap-8 py-10 sm:grid-cols-[0.9fr_1.6fr] sm:gap-12 sm:py-14">
-          <div className="max-w-[270px]">
-            <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#3D9BFF] text-xs font-semibold text-white">●</span>
-              <span className="font-display text-lg font-semibold text-[var(--ink)]">Sada</span>
-            </Link>
-            <p className="mt-3 text-sm leading-5 text-[var(--ink3)]">
-              A calm place to learn languages. Built around listening, curiosity and short honest feedback.
+            <p className="mt-5 max-w-2xl text-base leading-7 text-gray-600 sm:text-lg">
+              Choose a course that matches your goals and improve your English
+              through practical lessons, real conversations, listening practice,
+              and useful vocabulary.
             </p>
           </div>
-          <div>
-            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ink3)]">Languages we teach</p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {[
-                { name: "English", status: "live", active: true },
-                { name: "Spanish", status: "soon", active: false },
-                { name: "French", status: "soon", active: false },
-                { name: "Turkish", status: "soon", active: false },
-                { name: "Japanese", status: "soon", active: false },
-              ].map((language) => (
-                <span key={language.name} className={`rounded-full border px-3 py-1.5 text-xs font-medium ${language.active ? "border-[#D6E9FA] bg-[#F5FAFF] text-[#2477D1]" : "border-[var(--line)] bg-transparent text-[var(--ink2)]"}`}>
-                  {language.name}<span className="ml-1.5 text-[var(--ink3)]">{language.status}</span>
-                </span>
-              ))}
-            </div>
+        </section>
+
+        {/* Level filters */}
+        <section className="mb-10">
+          <div className="flex flex-wrap gap-3">
+            {levels.map((level, index) => (
+              <button
+                key={level}
+                type="button"
+                className={[
+                  "rounded-full px-5 py-2.5 text-sm font-bold transition",
+                  index === 0
+                    ? "bg-[#172033] text-white shadow-sm"
+                    : "border border-gray-200 bg-white text-gray-600 hover:border-[#18b9cf] hover:text-[#18b9cf]",
+                ].join(" ")}
+              >
+                {level}
+              </button>
+            ))}
           </div>
-        </div>
-      </footer>
+        </section>
+
+        {/* Courses */}
+        <section>
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-bold text-[#18b9cf]">
+                EXPLORE COURSES
+              </p>
+
+              <h2 className="mt-1 text-2xl font-black text-[#172033]">
+                Pick your next course
+              </h2>
+            </div>
+
+            <span className="hidden rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-500 shadow-sm sm:block">
+              {courses.length} courses
+            </span>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {courses.map((course) => (
+              <Link
+                key={course.slug}
+                href={`/courses/${course.slug}`}
+                className="group block"
+              >
+                <article className="h-full overflow-hidden rounded-[30px] border border-transparent bg-white p-7 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#18b9cf]/20 hover:shadow-xl">
+                  {/* Top */}
+                  <div className="flex items-start justify-between gap-5">
+                    <div
+                      className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-3xl ${course.color}`}
+                    >
+                      {course.icon}
+                    </div>
+
+                    <span className="rounded-full bg-[#f7f7f4] px-3.5 py-2 text-xs font-bold text-gray-500">
+                      {course.level}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="mt-7">
+                    <h3 className="text-2xl font-black text-[#172033] transition group-hover:text-[#18b9cf]">
+                      {course.title}
+                    </h3>
+
+                    <p className="mt-3 text-sm leading-7 text-gray-600">
+                      {course.description}
+                    </p>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="mt-7 flex flex-wrap gap-3">
+                    <div className="rounded-xl bg-[#f7f7f4] px-4 py-3">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">
+                        Lessons
+                      </p>
+
+                      <p className="mt-1 text-sm font-black text-[#172033]">
+                        {course.lessons}
+                      </p>
+                    </div>
+
+                    <div className="rounded-xl bg-[#f7f7f4] px-4 py-3">
+                      <p className="text-[11px] font-bold uppercase tracking-wide text-gray-400">
+                        Time
+                      </p>
+
+                      <p className="mt-1 text-sm font-black text-[#172033]">
+                        {course.minutes} min
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="mt-7 flex items-center justify-between border-t border-gray-100 pt-5">
+                    <span className="text-sm font-bold text-[#172033]">
+                      Start learning
+                    </span>
+
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f9fc] text-lg font-bold text-[#18b9cf] transition duration-300 group-hover:bg-[#18b9cf] group-hover:text-white">
+                      →
+                    </span>
+                  </div>
+                </article>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Bottom CTA */}
+        <section className="mt-10 overflow-hidden rounded-[32px] bg-[#172033] p-8 text-white sm:p-10">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl">
+              <span className="text-sm font-bold text-[#18b9cf]">
+                KEEP LEARNING
+              </span>
+
+              <h2 className="mt-2 text-2xl font-black sm:text-3xl">
+                Build your English skills one lesson at a time.
+              </h2>
+
+              <p className="mt-3 leading-7 text-gray-300">
+                Practice regularly and turn every lesson into real-world
+                English you can use.
+              </p>
+            </div>
+
+            <Link
+              href="/lessons"
+              className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-[#18b9cf] px-7 py-4 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#14a9bd] hover:shadow-lg"
+            >
+              Explore Lessons →
+            </Link>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
+

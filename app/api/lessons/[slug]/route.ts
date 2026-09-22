@@ -33,9 +33,9 @@ export async function GET(
 
   return NextResponse.json(
     {
-      error: "LESSONS_API_URL is not configured. Using the built-in lesson content.",
+      message: "LESSONS_API_URL is not configured. Using the built-in lesson content.",
       source: "fallback",
     },
-    { status: 503 },
+    { status: 200 },
   );
 }

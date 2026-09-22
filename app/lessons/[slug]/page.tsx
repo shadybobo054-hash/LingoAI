@@ -112,6 +112,7 @@ export default function LessonPlayerPage() {
   const [step, setStep] = useState(1);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [selectedFill, setSelectedFill] = useState<string | null>(null);
+  const [isExchangePlaying, setIsExchangePlaying] = useState(false);
   const lesson = apiLesson ?? fallbackLesson;
   const question = step === 3 ? lesson.questions[0] : step === 4 ? lesson.questions[1] : null;
 
@@ -141,6 +142,27 @@ export default function LessonPlayerPage() {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = document.documentElement.lang || "en-US";
     utterance.rate = 0.92;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const toggleExchangePlayback = () => {
+    if (!("speechSynthesis" in window)) {
+      return;
+    }
+
+    if (isExchangePlaying) {
+      window.speechSynthesis.cancel();
+      setIsExchangePlaying(false);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(lesson.exchange);
+    utterance.lang = document.documentElement.lang || "en-US";
+    utterance.rate = 0.92;
+    utterance.onstart = () => setIsExchangePlaying(true);
+    utterance.onend = () => setIsExchangePlaying(false);
+    utterance.onerror = () => setIsExchangePlaying(false);
     window.speechSynthesis.speak(utterance);
   };
 
@@ -243,11 +265,12 @@ export default function LessonPlayerPage() {
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    aria-label="Play the exchange"
-                    onClick={() => speak(lesson.exchange)}
+                    aria-label={isExchangePlaying ? "Stop the exchange" : "Play the exchange"}
+                    aria-pressed={isExchangePlaying}
+                    onClick={toggleExchangePlayback}
                     className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2477D1] text-xl text-white transition hover:scale-105"
                   >
-                    ▶
+                    {isExchangePlaying ? "■" : "▶"}
                   </button>
                   <div className="flex h-10 flex-1 items-center justify-between gap-1 overflow-hidden">
                     {[18, 28, 22, 34, 25, 12, 30, 18, 10, 26, 34, 20, 30, 16, 24, 12, 32, 22, 28, 14, 30, 20, 26, 16].map((height, index) => (
@@ -257,7 +280,7 @@ export default function LessonPlayerPage() {
                 </div>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
-                <button type="button" onClick={() => speak(lesson.exchange)} className="rounded-full border border-[var(--line2)] bg-[var(--surf)] px-4 py-2 text-sm font-semibold text-[var(--ink)]">Hear it again</button>
+                <button type="button" onClick={toggleExchangePlayback} className="rounded-full border border-[var(--line2)] bg-[var(--surf)] px-4 py-2 text-sm font-semibold text-[var(--ink)]">{isExchangePlaying ? "Stop listening" : "Hear it again"}</button>
                 <button type="button" className="rounded-full border border-[var(--line2)] bg-[var(--surf)] px-4 py-2 text-sm font-semibold text-[var(--ink)]">Show transcript</button>
               </div>
             </>
