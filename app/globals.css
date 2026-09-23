@@ -1,12 +1,16 @@
+
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap");
 
 @import "tailwindcss";
 
-/* ================================
-   SADA ENGLISH — LINGOAI THEME
-   ================================ */
+/* =========================================================
+   LINGOAI — SADA ENGLISH THEME
+   LIGHT / DARK
+========================================================= */
 
 :root {
+  color-scheme: light;
+
   --bg: #f7fafc;
   --bg2: #eef4f9;
 
@@ -67,11 +71,13 @@
     0 22px 50px -22px rgba(23, 32, 51, 0.3);
 }
 
-/* ================================
+/* =========================================================
    DARK MODE
-   ================================ */
+========================================================= */
 
 .dark {
+  color-scheme: dark;
+
   --bg: #0d1726;
   --bg2: #0a1220;
 
@@ -130,9 +136,15 @@
     0 24px 55px -22px rgba(0, 0, 0, 0.6);
 }
 
-/* ================================
+/* =========================================================
+   TAILWIND DARK VARIANT
+========================================================= */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* =========================================================
    RESET
-   ================================ */
+========================================================= */
 
 * {
   box-sizing: border-box;
@@ -142,12 +154,159 @@ html {
   scroll-behavior: smooth;
 }
 
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  background: var(--bg);
+  color: var(--ink);
+
+  font-family:
+    "IBM Plex Sans",
+    system-ui,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+body,
+main,
+section,
+article,
+header,
+footer,
+nav {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}
+
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+
+  font-family:
+    "Newsreader",
+    Georgia,
+    serif;
+
+  color: var(--ink);
+  line-height: 1.08;
+}
+
+p {
+  margin: 0;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =========================================================
+   ARABIC
+========================================================= */
+
+[dir="rtl"],
+.font-arabic {
+  font-family:
+    "IBM Plex Sans Arabic",
+    "IBM Plex Sans",
+    sans-serif;
+}
+
+/* =========================================================
+   MONO
+========================================================= */
+
+.font-mono,
+.label {
+  font-family:
+    "IBM Plex Mono",
+    monospace;
+}
+
+/* =========================================================
+   THEME UTILITIES
+========================================================= */
+
+.lingo-bg {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.lingo-surface {
+  background: var(--surf);
+  color: var(--ink);
+}
+
+.lingo-surface-2 {
+  background: var(--surf2);
+  color: var(--ink);
+}
+
+.lingo-text {
+  color: var(--ink);
+}
+
+.lingo-text-2 {
+  color: var(--ink2);
+}
+
+.lingo-text-3 {
+  color: var(--ink3);
+}
+
+.lingo-border {
+  border-color: var(--line);
+}
+
+.lingo-brand {
+  color: var(--brand);
+}
+
+.lingo-brand-bg {
+  background: var(--brand);
+  color: var(--btn-ink);
+}
+
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
+
 .scroll-reveal-ready {
   opacity: 0;
   transform: translate3d(24px, 0, 0);
+
   transition:
     opacity 0.72s ease,
     transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
+
   will-change: opacity, transform;
 }
 
@@ -164,6 +323,7 @@ html {
 .scroll-stagger.scroll-reveal-ready.is-visible > * {
   opacity: 1;
   transform: translate3d(0, 0, 0);
+
   transition:
     opacity 0.62s ease,
     transform 0.62s cubic-bezier(0.16, 1, 0.3, 1);
@@ -197,94 +357,9 @@ html {
   }
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-
-  background: var(--bg);
-  color: var(--ink);
-
-  font-family:
-    "IBM Plex Sans",
-    system-ui,
-    sans-serif;
-
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
-}
-
-/* ================================
-   TYPOGRAPHY
-   ================================ */
-
-h1,
-h2,
-h3,
-h4 {
-  margin: 0;
-
-  font-family:
-    "Newsreader",
-    Georgia,
-    serif;
-
-  color: var(--ink);
-
-  line-height: 1.08;
-}
-
-p {
-  margin: 0;
-  color: var(--ink2);
-  line-height: 1.7;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* ================================
-   ARABIC
-   ================================ */
-
-[dir="rtl"],
-.font-arabic {
-  font-family:
-    "IBM Plex Sans Arabic",
-    "IBM Plex Sans",
-    sans-serif;
-}
-
-/* ================================
-   MONO / LABELS
-   ================================ */
-
-.font-mono,
-.label {
-  font-family:
-    "IBM Plex Mono",
-    monospace;
-}
-
-/* ================================
+/* =========================================================
    SCROLLBAR
-   ================================ */
+========================================================= */
 
 ::-webkit-scrollbar {
   width: 9px;
@@ -303,18 +378,18 @@ a {
   background: var(--ink3);
 }
 
-/* ================================
+/* =========================================================
    SELECTION
-   ================================ */
+========================================================= */
 
 ::selection {
   background: var(--brand);
   color: white;
 }
 
-/* ================================
+/* =========================================================
    GLASS
-   ================================ */
+========================================================= */
 
 .glass {
   background: color-mix(
@@ -323,26 +398,30 @@ a {
     transparent
   );
 
+  border: 1px solid var(--line);
+
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-
-  border: 1px solid var(--line);
 }
 
-/* ================================
+/* =========================================================
    CARD
-   ================================ */
+========================================================= */
 
 .sada-card {
   background: var(--surf);
+  color: var(--ink);
+
   border: 1px solid var(--line);
   border-radius: var(--radius);
+
   box-shadow: var(--sh);
 
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
-    border-color 0.2s ease;
+    border-color 0.2s ease,
+    background-color 0.25s ease;
 }
 
 .sada-card:hover {
@@ -351,43 +430,9 @@ a {
   border-color: var(--line2);
 }
 
-.sada-speaking {
-  color: #0e8f69 !important;
-  transition: color 0.2s ease;
-}
-
-.ai-tutor-card .ai-tutor-label {
-  color: #b9c6ff !important;
-}
-
-.ai-tutor-card .ai-tutor-title {
-  color: #f4f8fc !important;
-}
-
-.ai-tutor-card .text-white\/55 {
-  color: rgb(255 255 255 / 0.55) !important;
-}
-
-.ai-tutor-card .font-semibold.text-white {
-  color: #ffffff !important;
-}
-
-@keyframes listening-wave {
-  0%,
-  100% {
-    opacity: 0.72;
-    transform: scaleY(0.82);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-}
-
-/* ================================
+/* =========================================================
    BUTTON
-   ================================ */
+========================================================= */
 
 .sada-button {
   display: inline-flex;
@@ -422,9 +467,9 @@ a {
   transform: translateY(0);
 }
 
-/* ================================
+/* =========================================================
    NAVBAR
-   ================================ */
+========================================================= */
 
 .sada-navbar {
   position: sticky;
@@ -437,15 +482,62 @@ a {
     transparent
   );
 
+  color: var(--ink);
+
   border-bottom: 1px solid var(--line);
 
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
 
-/* ================================
+/* =========================================================
+   AI TUTOR
+========================================================= */
+
+.ai-tutor-card .ai-tutor-label {
+  color: #b9c6ff !important;
+}
+
+.ai-tutor-card .ai-tutor-title {
+  color: #f4f8fc !important;
+}
+
+.ai-tutor-card .text-white\/55 {
+  color: rgb(255 255 255 / 0.55) !important;
+}
+
+.ai-tutor-card .font-semibold.text-white {
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   SPEAKING
+========================================================= */
+
+.sada-speaking {
+  color: var(--voc) !important;
+}
+
+/* =========================================================
+   LISTENING WAVE
+========================================================= */
+
+@keyframes listening-wave {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scaleY(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* =========================================================
    ANIMATIONS
-   ================================ */
+========================================================= */
 
 @keyframes sada-rise {
   from {
@@ -522,18 +614,18 @@ a {
   animation: sada-spin 1s linear infinite;
 }
 
-/* ================================
+/* =========================================================
    PAGE CONTAINER
-   ================================ */
+========================================================= */
 
 .page-container {
   width: min(1200px, calc(100% - 40px));
   margin-inline: auto;
 }
 
-/* ================================
+/* =========================================================
    FOCUS
-   ================================ */
+========================================================= */
 
 :focus-visible {
   outline: 3px solid color-mix(
@@ -545,12 +637,13 @@ a {
   outline-offset: 3px;
 }
 
-/* ================================
+/* =========================================================
    MOBILE
-   ================================ */
+========================================================= */
 
 @media (max-width: 640px) {
   .page-container {
     width: min(100% - 24px, 1200px);
   }
 }
+
