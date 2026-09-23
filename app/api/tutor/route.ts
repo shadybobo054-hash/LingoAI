@@ -2,18 +2,42 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const ollamaUrl = process.env.OLLAMA_URL ?? "http://127.0.0.1:11434";
-const ollamaModel = process.env.OLLAMA_MODEL ?? "llama3.2";
+const ollamaUrl =
+  process.env.OLLAMA_URL ?? "http://127.0.0.1:11434";
+
+const ollamaModel =
+  process.env.OLLAMA_MODEL ?? "llama3.2";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const question = typeof body.question === "string" ? body.question.trim() : "";
-    const mode = typeof body.mode === "string" ? body.mode : "Explain something";
-    const history: unknown[] = Array.isArray(body.history) ? body.history : [];
+
+    // Support both "question" and "message"
+    const question =
+      typeof body.question === "string"
+        ? body.question.trim()
+        : typeof body.message === "string"
+          ? body.message.trim()
+          : "";
+
+    const mode =
+      typeof body.mode === "string"
+        ? body.mode
+        : "Explain something";
+
+    const history: unknown[] = Array.isArray(body.history)
+      ? body.history
+      : [];
 
     if (!question) {
-      return NextResponse.json({ error: "Please enter a question." }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: "Please enter a question.",
+        },
+        {
+          status: 400,
+        },
+      );
     }
 
     const messages = [
@@ -21,8 +45,9 @@ export async function POST(request: Request) {
         role: "system",
         content: [
           "You are Sada, a patient English tutor.",
-          "The learner is using the tutor mode: " + mode + ".",
-          "Answer the learner's actual question directly; do not repeat the prompt or give a generic fallback.",
+          `The learner is using the tutor mode: ${mode}.`,
+          "Answer the learner's actual question directly.",
+          "Do not repeat the prompt or give a generic fallback.",
           "Keep answers short, practical, and easy to scan.",
           "For corrections, show the corrected sentence and briefly explain the change.",
           "For vocabulary, give meaning, pronunciation when useful, and one natural example.",
@@ -31,9 +56,15 @@ export async function POST(request: Request) {
           "For quiz mode, ask one question at a time and do not reveal the answer immediately.",
         ].join(" "),
       },
+
       ...history
         .filter(
-          (message: unknown): message is { role: string; text: string } =>
+          (
+            message: unknown,
+          ): message is {
+            role: string;
+            text: string;
+          } =>
             typeof message === "object" &&
             message !== null &&
             "role" in message &&
@@ -41,47 +72,96 @@ export async function POST(request: Request) {
             typeof message.text === "string",
         )
         .slice(-10)
-        .map((message: { role: string; text: string }) => ({
-          role: message.role === "tutor" ? "assistant" : "user",
-          content: message.text,
-        })),
-      { role: "user", content: question },
+        .map(
+          (
+            message: {
+              role: string;
+              text: string;
+            },
+          ) => ({
+            role:
+              message.role === "tutor"
+                ? "assistant"
+                : "user",
+            content: message.text,
+          }),
+        ),
+
+      {
+        role: "user",
+        content: question,
+      },
     ];
 
-    const response = await fetch(`${ollamaUrl}/api/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ model: ollamaModel, messages, stream: false }),
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${ollamaUrl}/api/chat`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: ollamaModel,
+          messages,
+          stream: false,
+        }),
+        cache: "no-store",
+      },
+    );
 
     if (!response.ok) {
       const detail = await response.text();
+
       return NextResponse.json(
-        { error: `Ollama returned ${response.status}: ${detail || "request failed"}` },
-        { status: 502 },
+        {
+          error: `Ollama returned ${response.status}: ${
+            detail || "request failed"
+          }`,
+        },
+        {
+          status: 502,
+        },
       );
     }
 
     const result = await response.json();
+
     const answer = result?.message?.content;
 
-    if (typeof answer !== "string" || !answer.trim()) {
+    if (
+      typeof answer !== "string" ||
+      !answer.trim()
+    ) {
       return NextResponse.json(
-        { error: "Ollama returned an empty response." },
-        { status: 502 },
+        {
+          error: "Ollama returned an empty response.",
+        },
+        {
+          status: 502,
+        },
       );
     }
 
-    return NextResponse.json({ answer: answer.trim(), model: ollamaModel });
+    return NextResponse.json({
+      answer: answer.trim(),
+      model: ollamaModel,
+    });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown Ollama connection error";
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unknown Ollama connection error";
 
     return NextResponse.json(
       {
-        error: `Could not connect to Ollama at ${ollamaUrl}. Make sure Ollama is running and that model “${ollamaModel}” is installed. ${message}`,
+        error:
+          `Could not connect to Ollama at ${ollamaUrl}. ` +
+          `Make sure Ollama is running and that model ` +
+          `“${ollamaModel}” is installed. ${message}`,
       },
-      { status: 503 },
+      {
+        status: 503,
+      },
     );
   }
 }
