@@ -1,4 +1,5 @@
-﻿"use client";
+﻿
+"use client";
 
 import { starterPrompts } from "./constants";
 import type { Message } from "./types";
@@ -24,36 +25,38 @@ export default function TutorChat({
 }: Props) {
   return (
     <div className="overflow-hidden rounded-[32px] border border-[var(--line)] bg-[var(--surf)] shadow-[var(--sh2)]">
+      {/* Header */}
       <div className="flex items-center justify-between border-b border-[var(--line)] px-5 py-4 sm:px-6">
         <div>
-          <p className="text-sm font-black text-[var(--ink)]">
+          <p className="text-[15px] font-bold tracking-tight text-[var(--ink)]">
             LingoAI Tutor
           </p>
-          <p className="mt-0.5 text-xs font-medium text-[var(--ink2)]">
+          <p className="mt-1 text-[13px] font-medium text-[var(--ink2)]">
             Your personal English practice space
           </p>
         </div>
 
-        <div className="flex items-center gap-2 rounded-full bg-[var(--brand-soft)] px-3 py-1.5 text-xs font-black text-[var(--brand-ink)]">
+        <div className="flex items-center gap-2 rounded-full bg-[var(--brand-soft)] px-3 py-1.5 text-[11px] font-bold text-[var(--brand-ink)]">
           <span className="h-2 w-2 rounded-full bg-[var(--brand)]" />
           AI ready
         </div>
       </div>
 
+      {/* Chat */}
       <div className="min-h-[470px] p-5 sm:p-7">
         {messages.length === 0 && !loading ? (
           <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
-            <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-[28px] bg-[var(--brand-soft)] text-5xl shadow-sm">
+            <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-[28px] bg-[var(--brand-soft)] text-5xl">
               🤖
             </div>
 
-            <h2 className="text-2xl font-black text-[var(--ink)]">
+            <h2 className="text-[25px] font-bold tracking-tight text-[var(--ink)]">
               What do you want to learn?
             </h2>
 
-            <p className="mt-2 max-w-md text-sm font-medium leading-6 text-[var(--ink2)]">
-              Ask anything about English or choose one of the
-              quick prompts below.
+            <p className="mt-2 max-w-md text-[14px] font-medium leading-7 text-[var(--ink2)]">
+              Ask anything about English or choose one of the quick
+              prompts below.
             </p>
 
             <div className="mt-7 grid w-full max-w-2xl gap-3 sm:grid-cols-2">
@@ -62,7 +65,7 @@ export default function TutorChat({
                   key={prompt}
                   type="button"
                   onClick={() => onPrompt(prompt)}
-                  className="rounded-2xl border border-[var(--line)] bg-[var(--surf2)] px-4 py-3 text-left text-sm font-bold text-[var(--ink)] transition hover:-translate-y-0.5 hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]"
+                  className="rounded-2xl border border-[var(--line)] bg-[var(--surf2)] px-4 py-3.5 text-left text-[14px] font-semibold leading-6 text-[var(--ink)] transition hover:-translate-y-0.5 hover:border-[var(--brand)] hover:bg-[var(--brand-soft)]"
                 >
                   {prompt}
                 </button>
@@ -70,85 +73,120 @@ export default function TutorChat({
             </div>
           </div>
         ) : (
-          <div className="space-y-5">
-            {messages.map((message, index) => (
-              <div
-                key={`${message.role}-${index}`}
-                className={`flex ${
-                  message.role === "user"
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
+          <div className="space-y-7">
+            {messages.map((message, index) => {
+              const isUser = message.role === "user";
+
+              return (
                 <div
-                  className={`max-w-[88%] rounded-3xl px-4 py-3 text-sm font-medium leading-7 ${
-                    message.role === "user"
-                      ? "rounded-br-md bg-[var(--btn)] text-[var(--btn-ink)]"
-                      : "rounded-bl-md border border-[var(--line)] bg-[var(--surf2)] text-[var(--ink)]"
+                  key={`${message.role}-${index}`}
+                  className={`flex w-full ${
+                    isUser ? "justify-end" : "justify-start"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">
-                    {message.content}
-                  </p>
+                  <div
+                    className={`max-w-[92%] sm:max-w-[76%] ${
+                      isUser
+                        ? "flex flex-col items-end"
+                        : "flex flex-col items-start"
+                    }`}
+                  >
+                    <span
+                      className={`mb-1.5 px-1 text-[11px] font-bold ${
+                        isUser
+                          ? "text-[var(--brand-ink)]"
+                          : "text-[var(--ink3)]"
+                      }`}
+                    >
+                      {isUser ? "You" : "LingoAI"}
+                    </span>
 
-                  {message.role === "assistant" && (
-                    <div className="mt-3 flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          onSpeak(message.content)
+                    {/* Message */}
+                    <div
+                      className={
+                        isUser
+                          ? "rounded-[22px] rounded-tr-[7px] bg-[#3d9bff] px-5 py-3.5 !text-white shadow-[0_8px_24px_rgba(61,155,255,0.18)]"
+                          : "rounded-[22px] rounded-tl-[7px] border border-[var(--line)] bg-[var(--surf2)] px-5 py-3.5 text-[var(--ink)]"
+                      }
+                    >
+                      <p
+                        className={
+                          isUser
+                            ? "whitespace-pre-wrap text-[15px] font-medium leading-[1.75] tracking-[-0.005em] !text-white"
+                            : "whitespace-pre-wrap text-[15px] font-medium leading-[1.75] tracking-[-0.005em] text-[var(--ink)]"
                         }
-                        className="rounded-xl border border-[var(--line)] bg-[var(--surf)] px-3 py-1.5 text-xs font-black text-[var(--ink)] transition hover:border-[var(--brand)]"
                       >
-                        🔊
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={onStopSpeaking}
-                        className="rounded-xl border border-[var(--line)] bg-[var(--surf)] px-3 py-1.5 text-xs font-black text-[var(--ink)] transition hover:border-[var(--brand)]"
-                      >
-                        ■
-                      </button>
+                        {message.content}
+                      </p>
                     </div>
-                  )}
-                </div>
-              </div>
-            ))}
 
+                    {/* AI controls */}
+                    {!isUser && (
+                      <div className="mt-2 flex gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => onSpeak(message.content)}
+                          className="flex h-8 items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surf)] px-2.5 text-[11px] font-bold text-[var(--ink2)] transition hover:border-[var(--brand)] hover:text-[var(--brand-ink)]"
+                        >
+                          🔊 Play
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={onStopSpeaking}
+                          className="flex h-8 items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surf)] px-2.5 text-[11px] font-bold text-[var(--ink2)] transition hover:border-[var(--brand)] hover:text-[var(--brand-ink)]"
+                        >
+                          ■ Stop
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Loading */}
             {loading && (
               <div className="flex justify-start">
-                <div className="rounded-3xl rounded-bl-md border border-[var(--line)] bg-[var(--surf2)] px-6 py-5">
-                  <div
-                    className="text-4xl"
-                    style={{
-                      animation:
-                        "robotFloat 1.8s ease-in-out infinite",
-                    }}
-                  >
-                    🤖
-                  </div>
+                <div>
+                  <span className="mb-1.5 block px-1 text-[11px] font-bold text-[var(--ink3)]">
+                    LingoAI
+                  </span>
 
-                  <p className="mt-2 text-xs font-bold text-[var(--ink2)]">
-                    AI is thinking...
-                  </p>
+                  <div className="rounded-[22px] rounded-tl-[7px] border border-[var(--line)] bg-[var(--surf2)] px-5 py-4">
+                    <div
+                      className="text-3xl"
+                      style={{
+                        animation:
+                          "robotFloat 1.8s ease-in-out infinite",
+                      }}
+                    >
+                      🤖
+                    </div>
+
+                    <p className="mt-2 text-[12px] font-semibold text-[var(--ink2)]">
+                      AI is thinking...
+                    </p>
+                  </div>
                 </div>
               </div>
             )}
 
+            {/* Error */}
             {error && (
-              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-600">
+              <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[14px] font-semibold leading-6 text-red-600">
                 {error}
               </div>
             )}
 
+            {/* Last question */}
             {!loading && messages.length > 0 && (
               <div className="rounded-2xl border border-[var(--line)] bg-[var(--surf2)] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--ink3)]">
-                  Last question
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--ink3)]">
+                  Conversation
                 </p>
 
-                <p className="mt-2 text-sm font-bold text-[var(--ink)]">
+                <p className="mt-1.5 text-[13px] font-medium leading-6 text-[var(--ink2)]">
                   {lastUserMessage}
                 </p>
               </div>
