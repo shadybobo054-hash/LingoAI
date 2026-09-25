@@ -1,15 +1,39 @@
+
 import Link from "next/link";
 import DailyLesson from "./components/DailyLesson";
 import ListeningCard from "./components/ListeningCard";
 import ScrollReveal from "./components/ScrollReveal";
+import QuickChallenge from "./components/QuickChallenge";
 
 const learningWays = [
-  ["Vocabulary", "Word of the day", "#099B78", "var(--surf)"],
-  ["Listening", "At the café: ordering coffee", "#0A7E99", "var(--brand-soft)"],
-  ["Grammar", "Build sentences that sound natural", "#6A52EE", "var(--surf)"],
-  ["Speaking", "Say what you mean with confidence", "#CE543B", "var(--surf)"],
-  ["Reading", "Follow the meaning, not every word", "#1D72D2", "var(--surf)"],
-  ["Review", "Keep the useful things close", "#0E8F69", "var(--surf)"],
+  {
+    title: "Vocabulary",
+    label: "Word of the day",
+    description: "Build a vocabulary you can actually use.",
+    color: "#099B78",
+    href: "/practice/vocabulary",
+  },
+  {
+    title: "Listening",
+    label: "At the café: ordering coffee",
+    description: "Train your ear with natural English.",
+    color: "#0A7E99",
+    href: "/practice/listening",
+  },
+  {
+    title: "Speaking",
+    label: "Say what you mean with confidence",
+    description: "Practice speaking without overthinking every word.",
+    color: "#CE543B",
+    href: "/ai-tutor",
+  },
+  {
+    title: "Grammar",
+    label: "Build sentences that sound natural",
+    description: "Understand the patterns behind everyday English.",
+    color: "#6A52EE",
+    href: "/practice",
+  },
 ];
 
 const waveform = [
@@ -18,16 +42,51 @@ const waveform = [
   30, 22, 36, 18, 28,
 ];
 
+const levels = [
+  {
+    level: "A1",
+    title: "Beginner",
+    description: "Start speaking with everyday words and simple phrases.",
+    active: true,
+  },
+  {
+    level: "A2",
+    title: "Elementary",
+    description: "Handle common conversations with more confidence.",
+    active: false,
+  },
+  {
+    level: "B1",
+    title: "Intermediate",
+    description: "Express ideas, opinions and experiences naturally.",
+    active: false,
+  },
+  {
+    level: "B2",
+    title: "Upper Intermediate",
+    description: "Follow longer conversations and explain complex ideas.",
+    active: false,
+  },
+  {
+    level: "C1",
+    title: "Advanced",
+    description: "Use English comfortably across real situations.",
+    active: false,
+  },
+];
+
 const languages = ["English", "Spanish", "French", "Turkish", "Japanese"];
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--ink)] transition-colors duration-300">
+    <main className="min-h-screen overflow-hidden bg-[var(--bg)] text-[var(--ink)] transition-colors duration-300">
       {/* HERO */}
       <section className="relative overflow-hidden bg-[var(--bg)]">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute right-[-8%] top-[-10%] h-[420px] w-[420px] rounded-full bg-[var(--brand-soft)] opacity-70 blur-3xl" />
+
           <div className="absolute bottom-[-15%] left-[-12%] h-[360px] w-[360px] rounded-full bg-[var(--surf2)] opacity-70 blur-3xl" />
+
           <div className="absolute right-[35%] top-[35%] h-[180px] w-[180px] rounded-full bg-[var(--brand)] opacity-[0.035] blur-3xl" />
         </div>
 
@@ -57,7 +116,9 @@ export default function Home() {
                   className="sada-button inline-flex h-12 items-center justify-center rounded-full px-7 text-base"
                 >
                   Start learning
-                  <span className="ml-2 transition-transform duration-300">→</span>
+                  <span className="ml-2 transition-transform duration-300">
+                    →
+                  </span>
                 </Link>
 
                 <Link
@@ -77,6 +138,7 @@ export default function Home() {
 
             <div className="relative z-10">
               <div className="pointer-events-none absolute -right-5 -top-5 h-24 w-24 rounded-full border border-[var(--line)] bg-[var(--brand-soft)] opacity-70" />
+
               <div className="pointer-events-none absolute -bottom-6 -left-6 h-28 w-28 rounded-full bg-[var(--surf2)] opacity-80 blur-2xl" />
 
               <div className="relative">
@@ -90,274 +152,611 @@ export default function Home() {
         </div>
       </section>
 
-      {/* DAILY LESSON + SIX WAYS */}
-      <section className="border-y border-[var(--line)] bg-[var(--bg2)]">
-        <div className="page-container py-12 sm:py-16">
+      {/* CONTINUE LEARNING */}
+      <section className="border-t border-[var(--line)] bg-[var(--bg)]">
+        <div className="page-container py-14 sm:py-18 lg:py-22">
           <ScrollReveal>
-            <DailyLesson />
-          </ScrollReveal>
+            {/* section heading */}
+            <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand)]" />
 
-          <ScrollReveal className="mt-16">
-            <h2 className="font-display text-4xl font-medium text-[var(--ink)] sm:text-5xl">
-              Six ways to learn
-            </h2>
-
-            <p className="mt-3 max-w-[500px] text-sm leading-5 text-[var(--ink2)] sm:text-base">
-              Each one is a different kind of attention. Pick the one that fits
-              the next ten minutes.
-            </p>
-          </ScrollReveal>
-
-          <ScrollReveal className="scroll-stagger mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {learningWays.map(([title, label, color, bg], index) => (
-              <Link
-                key={title}
-                href="/practice"
-                className={`group rounded-[22px] border border-[var(--line)] p-6 shadow-[var(--sh)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--sh2)] ${
-                  index === 0 ? "sm:col-span-2 lg:col-span-2" : ""
-                }`}
-                style={{ backgroundColor: bg }}
-              >
-                <div className="flex items-center justify-between">
-                  <p
-                    className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em]"
-                    style={{ color }}
-                  >
-                    <span className="mr-2 inline-block h-2 w-2 rounded-full bg-current" />
-                    {title}
+                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--brand-ink)]">
+                    Continue learning
                   </p>
-
-                  {index === 0 && (
-                    <span className="text-xs text-[var(--ink3)]">
-                      Word of the day
-                    </span>
-                  )}
                 </div>
 
-                {index === 0 ? (
-                  <>
-                    <div className="mt-4 flex items-center gap-3">
-                      <h3 className="font-display text-4xl font-medium text-[var(--ink)]">
-                        curious
-                      </h3>
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)] transition group-hover:scale-105">
-                        ▶
+                <h2 className="mt-3 font-display text-4xl font-medium tracking-[-0.045em] text-[var(--ink)] sm:text-5xl">
+                  Your next step.
+                </h2>
+
+                <p className="mt-3 max-w-[520px] text-sm leading-6 text-[var(--ink2)]">
+                  Keep your English moving with one focused lesson at a time.
+                </p>
+              </div>
+
+              <Link
+                href="/lessons"
+                className="group inline-flex w-fit items-center gap-2 rounded-full border border-[var(--line2)] bg-[var(--surf)] px-4 py-2.5 text-xs font-bold text-[var(--ink)] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--brand)] hover:text-[var(--brand-ink)] hover:shadow-[var(--sh)]"
+              >
+                View all
+
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            </div>
+
+            {/* main learning command center */}
+            <div className="mt-9 overflow-hidden rounded-[32px] border border-[var(--line)] bg-[var(--surf)] shadow-[var(--sh)]">
+              {/* top meta */}
+              <div className="flex flex-col gap-4 border-b border-[var(--line)] px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--brand-soft)] font-mono text-[10px] font-bold text-[var(--brand-ink)]">
+                    A1
+                  </span>
+
+                  <div>
+                    <p className="text-xs font-bold text-[var(--ink)]">
+                      Beginner
+                    </p>
+
+                    <p className="mt-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--ink3)]">
+                      Lesson 02 · Present Perfect
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="hidden h-1 w-28 overflow-hidden rounded-full bg-[var(--surf2)] sm:block">
+                    <div className="h-full w-[20%] rounded-full bg-[var(--brand)]" />
+                  </div>
+
+                  <span className="font-mono text-[10px] font-bold text-[var(--brand-ink)]">
+                    20%
+                  </span>
+                </div>
+              </div>
+
+              {/* lesson intro */}
+              <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
+                <div className="border-b border-[var(--line)] p-6 sm:p-8 lg:border-b-0 lg:border-r lg:p-10">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded-full bg-[var(--brand-soft)] px-2.5 py-1 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--brand-ink)]">
+                      Grammar
+                    </span>
+
+                    <span className="text-[var(--ink3)]">·</span>
+
+                    <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--ink3)]">
+                      6 min
+                    </span>
+                  </div>
+
+                  <h3 className="mt-5 max-w-[600px] font-display text-[2.4rem] font-medium leading-[1] tracking-[-0.05em] text-[var(--ink)] sm:text-[3.3rem]">
+                    Present
+                    <span className="block text-[var(--brand-ink)]">
+                      Perfect.
+                    </span>
+                  </h3>
+
+                  <p className="mt-5 max-w-[520px] text-sm leading-7 text-[var(--ink2)] sm:text-[15px]">
+                    Talk about things that started in the past and are still
+                    happening now.
+                  </p>
+
+                  {/* lesson steps */}
+                  <div className="mt-8 flex flex-wrap items-center gap-2">
+                    {[
+                      ["01", "Words", false],
+                      ["02", "Listen", false],
+                      ["03", "Practice", true],
+                      ["04", "Review", false],
+                    ].map(([number, label, active]) => (
+                      <div
+                        key={label}
+                        className={`flex items-center gap-2 rounded-full border px-3 py-2 ${
+                          active
+                            ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-ink)]"
+                            : "border-[var(--line)] bg-[var(--surf2)] text-[var(--ink3)]"
+                        }`}
+                      >
+                        <span className="font-mono text-[8px] font-bold">
+                          {number}
+                        </span>
+
+                        <span className="text-[10px] font-bold">
+                          {label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* progress */}
+                  <div className="mt-9">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="font-mono text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--ink3)]">
+                        Lesson progress
+                      </span>
+
+                      <span className="text-[10px] font-bold text-[var(--ink2)]">
+                        20%
                       </span>
                     </div>
-                    <p className="mt-3 font-mono text-sm text-[var(--ink3)]">
-                      /ˈkjʊə.ri.əs/
-                    </p>
-                    <p className="mt-3 text-sm text-[var(--ink)]">
-                      Wanting to know or learn more about something.
-                    </p>
-                    <p className="mt-3 font-display text-base italic text-[var(--ink2)]">
-                      “She was curious about how the machine worked.”
-                    </p>
-                  </>
-                ) : index === 1 ? (
-                  <>
-                    <h3 className="mt-4 font-display text-2xl font-medium text-[var(--ink)]">
-                      {label}
-                    </h3>
 
-                    <div className="mt-5 flex items-center gap-3">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--surf)] text-[#0A7E99] shadow-sm">
-                        ▶
-                      </span>
+                    <div className="h-1.5 overflow-hidden rounded-full bg-[var(--surf2)]">
+                      <div className="h-full w-[20%] rounded-full bg-[var(--brand)] transition-all duration-700" />
+                    </div>
+                  </div>
 
-                      <div className="flex h-8 flex-1 items-center justify-between gap-1 overflow-hidden">
-                        {waveform.slice(0, 24).map((height, i) => (
-                          <span
-                            key={`${height}-${i}`}
-                            className="w-1.5 shrink-0 rounded-full bg-[#79B8CA]"
-                            style={{ height: `${Math.max(10, height * 0.7)}px` }}
-                          />
-                        ))}
+                  <Link
+                    href="/lessons/a1/greetings"
+                    className="group mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full bg-[var(--brand)] px-6 text-sm font-bold !text-white shadow-[0_8px_25px_rgba(61,155,255,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2f8ee8] hover:shadow-[0_14px_32px_rgba(61,155,255,0.25)]"
+                  >
+                    <span className="!text-white">Continue lesson</span>
+
+                    <span className="!text-white transition-transform duration-300 group-hover:translate-x-1">
+                      →
+                    </span>
+                  </Link>
+                </div>
+
+                {/* progress panel */}
+                <div className="relative overflow-hidden bg-[var(--surf2)] p-6 sm:p-8 lg:p-10">
+                  <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[var(--brand-soft)] opacity-70 blur-3xl" />
+
+                  <div className="relative">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.16em] text-[var(--ink3)]">
+                          Your progress
+                        </p>
+
+                        <p className="mt-1 text-xs font-medium text-[var(--ink2)]">
+                          This week
+                        </p>
+                      </div>
+
+                      <span className="text-xl">✦</span>
+                    </div>
+
+                    <div className="mt-8">
+                      <p className="font-display text-6xl font-medium tracking-[-0.06em] text-[var(--ink)]">
+                        7
+                      </p>
+
+                      <p className="mt-1 text-xs font-bold text-[var(--brand-ink)]">
+                        day streak
+                      </p>
+                    </div>
+
+                    <div className="mt-8 grid grid-cols-2 gap-3">
+                      <div className="rounded-[18px] border border-[var(--line)] bg-[var(--surf)] p-4">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--ink3)]">
+                          XP
+                        </p>
+
+                        <p className="mt-2 text-xl font-bold text-[var(--ink)]">
+                          240
+                        </p>
+
+                        <p className="mt-1 text-[10px] font-medium text-[var(--ink3)]">
+                          this week
+                        </p>
+                      </div>
+
+                      <div className="rounded-[18px] border border-[var(--line)] bg-[var(--surf)] p-4">
+                        <p className="font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--ink3)]">
+                          Lessons
+                        </p>
+
+                        <p className="mt-2 text-xl font-bold text-[var(--ink)]">
+                          3 / 5
+                        </p>
+
+                        <p className="mt-1 text-[10px] font-medium text-[var(--ink3)]">
+                          completed
+                        </p>
                       </div>
                     </div>
-                  </>
-                ) : (
-                  <h3 className="mt-4 max-w-[270px] font-display text-2xl font-medium leading-tight text-[var(--ink)]">
-                    {label}
-                  </h3>
-                )}
-              </Link>
-            ))}
+
+                    <div className="mt-7 border-t border-[var(--line)] pt-5">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-[#099B78]" />
+
+                        <p className="text-xs font-semibold text-[var(--ink2)]">
+                          You&apos;re on a good streak.
+                        </p>
+                      </div>
+
+                      <p className="mt-2 text-[11px] leading-5 text-[var(--ink3)]">
+                        Keep going today to make it 8 days.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 60 second challenge */}
+            <div className="mt-5">
+              <QuickChallenge />
+            </div>
           </ScrollReveal>
         </div>
       </section>
 
-      {/* FEATURE CARDS */}
-      <footer className="border-t border-[var(--line)] bg-[var(--bg2)]">
-        <div className="page-container py-10 sm:py-14">
-          <div className="grid gap-4 lg:grid-cols-[0.95fr_2fr] lg:grid-rows-[auto_auto]">
-            <Link
-              href="/lessons"
-              className="group sada-card flex min-h-[255px] flex-col justify-between rounded-[24px] p-6 sm:p-7"
-            >
-              <div>
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2477D1]">
-                  <span className="mr-2 inline-block h-2 w-2 rounded-full bg-current" />
-                  Lessons
-                </p>
-                <h2 className="mt-4 font-display text-3xl font-medium text-[var(--ink)]">
-                  Ordering food
-                </h2>
-                <p className="mt-4 max-w-[300px] text-sm leading-6 text-[var(--ink2)]">
-                  Everything you need to order a meal with confidence: polite
-                  phrasing, the waiter&apos;s questions, and asking for
-                  recommendations.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {["Vocabulary", "Listening", "Practice"].map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-[var(--line)] bg-[var(--brand-soft)] px-3 py-1 text-xs font-semibold text-[var(--brand-ink)]"
+      {/* WORD OF THE DAY */}
+      <section className="border-t border-[var(--line)] bg-[var(--bg)]">
+        <div className="page-container py-16 sm:py-20 lg:py-24">
+          <ScrollReveal>
+            <div className="mx-auto max-w-[980px]">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[#099B78]">
+                    Vocabulary
+                  </p>
+
+                  <p className="mt-1.5 text-xs font-medium text-[var(--ink3)]">
+                    A useful word for today
+                  </p>
+                </div>
+
+                <span className="hidden rounded-full border border-[var(--line)] bg-[var(--surf)] px-3 py-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] text-[var(--ink3)] sm:block">
+                  Word 01
+                </span>
+              </div>
+
+              <div className="mt-8 overflow-hidden rounded-[30px] border border-[var(--line)] bg-[var(--surf)] shadow-[var(--sh)]">
+                <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
+                  <div className="relative overflow-hidden border-b border-[var(--line)] p-7 sm:p-9 lg:border-b-0 lg:border-r lg:p-11">
+                    <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[#099B78]/[0.07] blur-3xl" />
+
+                    <div className="relative">
+                      <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--ink3)]">
+                        Adjective
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap items-center gap-4">
+                        <h2 className="font-display text-[4rem] font-medium leading-none tracking-[-0.06em] text-[var(--ink)] sm:text-[5rem]">
+                          curious
+                        </h2>
+
+                        <button
+                          type="button"
+                          aria-label="Play pronunciation"
+                          className="group flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--brand)] text-white shadow-[0_8px_22px_rgba(61,155,255,0.2)] transition-all duration-300 hover:scale-105 hover:shadow-[0_12px_28px_rgba(61,155,255,0.3)]"
+                        >
+                          <span className="text-sm transition-transform duration-300 group-hover:scale-110">
+                            ▶
+                          </span>
+                        </button>
+                      </div>
+
+                      <div className="mt-4 flex items-center gap-3">
+                        <span className="font-mono text-xs text-[var(--ink3)]">
+                          /ˈkjʊə.ri.əs/
+                        </span>
+
+                        <span className="h-1 w-1 rounded-full bg-[var(--line2)]" />
+
+                        <span className="text-xs font-semibold text-[#099B78]">
+                          curious
+                        </span>
+                      </div>
+
+                      <div className="mt-8 flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-[#099B78]" />
+
+                        <span className="text-xs font-semibold text-[var(--ink2)]">
+                          Learn it. Hear it. Use it.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-7 sm:p-9 lg:p-11">
+                    <div>
+                      <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-[var(--ink3)]">
+                        Meaning
+                      </p>
+
+                      <p className="mt-3 max-w-[420px] font-display text-xl font-medium leading-8 tracking-[-0.02em] text-[var(--ink)] sm:text-2xl">
+                        Wanting to know or learn more about something.
+                      </p>
+                    </div>
+
+                    <div className="my-7 h-px bg-[var(--line)]" />
+
+                    <div>
+                      <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.16em] text-[var(--ink3)]">
+                        In a sentence
+                      </p>
+
+                      <p className="mt-3 max-w-[420px] text-sm font-medium leading-7 text-[var(--ink2)]">
+                        <span className="font-display text-lg italic text-[var(--ink)]">
+                          “She was curious about how the machine worked.”
+                        </span>
+                      </p>
+                    </div>
+
+                    <Link
+                      href="/practice/vocabulary"
+                      className="group mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--ink)] px-5 py-2.5 text-xs font-bold text-[var(--bg)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[var(--brand)] hover:text-white"
                     >
-                      {tag}
-                    </span>
-                  ))}
+                      Practice vocabulary
+
+                      <span className="transition-transform duration-300 group-hover:translate-x-1">
+                        →
+                      </span>
+                    </Link>
+                  </div>
                 </div>
               </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
 
-              <div className="mt-7 flex items-center justify-between border-t border-[var(--line)] pt-4 text-xs text-[var(--ink3)]">
-                <span>Beginner · 8 min · 5 steps</span>
-                <span className="font-semibold text-[#2477D1] transition group-hover:translate-x-1">
-                  Open lesson →
-                </span>
-              </div>
-            </Link>
-
-            <Link
-              href="/ai-tutor"
-              className="group flex min-h-[258px] flex-col justify-between rounded-[24px] bg-[#2F4277] p-[18px] text-white shadow-[var(--sh2)] transition duration-300 hover:-translate-y-1 sm:p-[18px]"
-            >
-              <div>
-                <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#B9C6FF]">
-                  <span className="mr-2 inline-block h-2 w-2 rounded-full bg-current" />
-                  AI Tutor
-                </p>
-
-                <h2 className="mt-3 max-w-[650px] font-display text-[1.65rem] font-medium leading-[1.12] text-[#F4F8FC]">
-                  “Why do we say “I have been” instead of “I was” here?”
-                </h2>
-
-                <div className="mt-5 max-w-[710px] rounded-2xl bg-white/15 px-4 py-3 text-sm">
-                  <p className="flex items-center gap-3 text-white/55 line-through">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#D14A33] text-[11px] text-[#512321]">
-                      ×
-                    </span>
-                    I am agree with you
-                  </p>
-
-                  <p className="mt-2 flex items-center gap-3 font-semibold text-white">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#0E8F69] text-[11px] text-[#062E26]">
-                      ✓
-                    </span>
-                    I agree with you
-                  </p>
-                </div>
-              </div>
-
-              <span className="mt-5 inline-flex h-11 w-fit items-center rounded-full bg-white px-5 text-sm font-semibold text-[#2B3A66] transition group-hover:translate-x-1">
-                Practice with AI&nbsp; →
-              </span>
-            </Link>
-
-            <Link
-              href="/practice"
-              className="group sada-card min-h-[210px] rounded-[24px] p-6 sm:p-7"
-            >
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#CE543B]">
-                <span className="mr-2 inline-block h-2 w-2 rounded-full bg-current" />
-                Practice
+      {/* LEARNING WAYS */}
+      <section className="border-t border-[var(--line)] bg-[var(--bg)]">
+        <div className="page-container py-16 sm:py-20 lg:py-24">
+          <ScrollReveal>
+            <div className="max-w-[620px]">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--ink3)]">
+                Explore
               </p>
-              <h2 className="mt-4 font-display text-3xl font-medium text-[var(--ink)]">
-                Five questions, two minutes
+
+              <h2 className="mt-3 font-display text-4xl font-medium tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
+                Learn in different ways.
               </h2>
-              <p className="mt-4 text-sm leading-6 text-[var(--ink2)]">
-                Mixed vocabulary, grammar and listening — instant feedback on
-                every answer.
-              </p>
-              <div className="mt-5 flex flex-wrap gap-2">
-                <span className="rounded-full border border-[var(--line)] bg-[var(--surf2)] px-4 py-2 text-xs font-semibold text-[#CE543B]">
-                  Quick 5 questions
-                </span>
-                <span className="rounded-full border border-[var(--line2)] px-4 py-2 text-xs font-semibold text-[var(--ink)] transition group-hover:border-[#CE543B]">
-                  All practice
-                </span>
-              </div>
-            </Link>
 
-            <Link
-              href="/courses"
-              className="group min-h-[210px] rounded-[24px] border border-[var(--line)] bg-[var(--surf)] p-6 shadow-[var(--sh)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--sh2)] sm:p-7"
-            >
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6A52EE]">
-                <span className="mr-2 inline-block h-2 w-2 rounded-full bg-current" />
-                Courses
+              <p className="mt-4 max-w-[500px] text-sm leading-6 text-[var(--ink2)]">
+                Change the kind of attention you give English.
               </p>
-              <h2 className="mt-4 font-display text-3xl font-medium text-[var(--ink)]">
-                English for travel
-              </h2>
-              <p className="mt-4 max-w-[350px] text-sm leading-6 text-[var(--ink2)]">
-                Six lessons that take you from the airport to the hotel desk
-                to the restaurant table.
-              </p>
-              <div className="mt-6 flex flex-wrap items-center gap-4 text-xs">
-                <span className="rounded-full border border-[var(--line)] bg-[var(--surf2)] px-3 py-2 text-[var(--ink2)]">
-                  6 lessons · 1h 20m
-                </span>
-                <span className="font-semibold text-[#6A52EE] transition group-hover:translate-x-1">
-                  View course →
-                </span>
-              </div>
-            </Link>
+            </div>
+          </ScrollReveal>
+
+          <div className="mt-10">
+            {learningWays.map((item) => (
+              <ScrollReveal key={item.title}>
+                <Link
+                  href={item.href}
+                  className="group block border-t border-[var(--line)] py-5 transition duration-300 last:border-b hover:px-2"
+                >
+                  <div className="grid items-center gap-3 sm:grid-cols-[110px_1fr_auto] sm:gap-7">
+                    <p
+                      className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em]"
+                      style={{ color: item.color }}
+                    >
+                      <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-current" />
+                      {item.title}
+                    </p>
+
+                    <div>
+                      <h3 className="font-display text-xl font-medium text-[var(--ink)] transition duration-300 group-hover:translate-x-1 sm:text-2xl">
+                        {item.label}
+                      </h3>
+
+                      <p className="mt-1 text-xs leading-5 text-[var(--ink2)] sm:text-sm">
+                        {item.description}
+                      </p>
+                    </div>
+
+                    <span
+                      className="text-base transition duration-300 group-hover:translate-x-1"
+                      style={{ color: item.color }}
+                    >
+                      →
+                    </span>
+                  </div>
+                </Link>
+              </ScrollReveal>
+            ))}
           </div>
+        </div>
+      </section>
 
-          <ScrollReveal className="mt-10 grid gap-8 border-t border-[var(--line)] pt-8 sm:grid-cols-[0.9fr_1.6fr] sm:gap-12">
-            <div className="max-w-[270px]">
+      {/* AI TUTOR */}
+      <section className="border-t border-[var(--line)] bg-[var(--bg)]">
+        <div className="page-container py-14 sm:py-18 lg:py-20">
+          <ScrollReveal>
+            <div className="group relative overflow-hidden rounded-[30px] bg-[#2F4277] px-6 py-8 shadow-[var(--sh)] transition-all duration-500 hover:shadow-[0_20px_55px_rgba(47,66,119,0.18)] sm:px-9 sm:py-9 lg:px-11 lg:py-10">
+              <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-[#8BA2FF]/15 blur-3xl transition-transform duration-700 group-hover:scale-110" />
+
+              <div className="pointer-events-none absolute -bottom-20 left-[35%] h-48 w-48 rounded-full bg-[#6E83D8]/10 blur-3xl" />
+
+              <div className="pointer-events-none absolute right-8 top-8 hidden gap-1.5 opacity-40 sm:flex">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#B9C6FF]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#B9C6FF]/60" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#B9C6FF]/30" />
+              </div>
+
+              <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+                <div className="max-w-[700px]">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-xs text-[#B9C6FF]">
+                      ✦
+                    </span>
+
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[#B9C6FF]">
+                      AI Tutor
+                    </p>
+                  </div>
+
+                  <h2 className="mt-4 max-w-[650px] font-display text-[2rem] font-medium leading-[1.05] tracking-[-0.035em] text-[#F7F9FF] sm:text-[2.6rem]">
+                    Don&apos;t just get the answer.
+                    <span className="block text-[#B9C6FF]">
+                      Understand why.
+                    </span>
+                  </h2>
+
+                  <p className="mt-4 max-w-[570px] text-sm leading-6 text-white/65 sm:text-[15px]">
+                    Ask about grammar, vocabulary, speaking or anything you
+                    don&apos;t understand.
+                  </p>
+                </div>
+
+                <Link
+                  href="/ai-tutor"
+                  aria-label="Open AI Tutor"
+                  className="group/button relative z-10 inline-flex h-12 w-fit shrink-0 items-center justify-center gap-2 rounded-full bg-[var(--brand)] px-6 text-sm font-bold !text-white shadow-[0_8px_25px_rgba(61,155,255,0.2)] transition-all duration-300 hover:-translate-y-1 hover:bg-[#2f8ee8] hover:shadow-[0_14px_32px_rgba(61,155,255,0.3)] sm:h-[52px] sm:px-7"
+                >
+                  <span className="!text-white">
+                    Open AI Tutor
+                  </span>
+
+                  <span className="!text-white transition-transform duration-300 group-hover/button:translate-x-1">
+                    →
+                  </span>
+                </Link>
+              </div>
+
+              <div className="relative mt-8 flex items-center gap-3 border-t border-white/10 pt-4">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#8ED8C1]" />
+
+                <p className="text-[11px] font-medium text-white/45">
+                  Grammar · Vocabulary · Speaking · Conversation
+                </p>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* JOURNEY */}
+      <section className="border-t border-[var(--line)] bg-[var(--bg)]">
+        <div className="page-container py-16 sm:py-20">
+          <ScrollReveal className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-20">
+            <div className="max-w-[360px]">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--brand-ink)]">
+                Your journey
+              </p>
+
+              <h2 className="mt-3 font-display text-3xl font-medium leading-[1] tracking-[-0.04em] text-[var(--ink)] sm:text-4xl">
+                One step at a time.
+              </h2>
+
+              <p className="mt-4 text-sm leading-6 text-[var(--ink2)]">
+                Finish each level and unlock the next stage.
+              </p>
+            </div>
+
+            <div className="relative">
+              <div className="absolute bottom-5 left-[17px] top-5 w-px bg-[var(--line)]" />
+
+              <div>
+                {levels.map((item) => (
+                  <Link
+                    key={item.level}
+                    href="/lessons"
+                    className="group relative flex gap-5 py-3.5 transition duration-300"
+                  >
+                    <div className="relative z-10 flex w-9 shrink-0 justify-center">
+                      <span
+                        className={`mt-1.5 flex h-2.5 w-2.5 rounded-full border-2 ${
+                          item.active
+                            ? "border-[var(--brand)] bg-[var(--brand)] shadow-[0_0_0_5px_var(--brand-soft)]"
+                            : "border-[var(--line2)] bg-[var(--bg)] group-hover:border-[var(--brand)]"
+                        }`}
+                      />
+                    </div>
+
+                    <div className="flex min-w-0 flex-1 items-center justify-between gap-5">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`font-mono text-[10px] font-bold ${
+                              item.active
+                                ? "text-[var(--brand-ink)]"
+                                : "text-[var(--ink3)]"
+                            }`}
+                          >
+                            {item.level}
+                          </span>
+
+                          {item.active && (
+                            <span className="rounded-full bg-[var(--brand-soft)] px-2 py-0.5 text-[9px] font-bold text-[var(--brand-ink)]">
+                              Current
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="mt-1 font-display text-lg font-medium text-[var(--ink)]">
+                          {item.title}
+                        </h3>
+
+                        <p className="mt-0.5 text-xs leading-5 text-[var(--ink2)]">
+                          {item.description}
+                        </p>
+                      </div>
+
+                      <span className="hidden text-xs font-semibold text-[var(--ink3)] transition group-hover:translate-x-1 group-hover:text-[var(--brand-ink)] sm:block">
+                        View →
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-[var(--line)] bg-[var(--bg)]">
+        <div className="page-container py-8 sm:py-10">
+          <div className="flex flex-col justify-between gap-7 sm:flex-row sm:items-start">
+            <div className="max-w-[300px]">
               <Link href="/" className="flex items-center gap-2.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--brand)] text-xs font-semibold text-[var(--btn-ink)]">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--brand)] text-xs font-semibold text-[var(--btn-ink)]">
                   ●
                 </span>
-                <span className="font-display text-lg font-semibold text-[var(--ink)]">
-                  Sada
+
+                <span className="font-display text-xl font-semibold text-[var(--ink)]">
+                  LingoAI
                 </span>
               </Link>
 
-              <p className="mt-3 text-sm leading-5 text-[var(--ink3)]">
-                A calm place to learn languages. Built around listening,
-                curiosity and short honest feedback.
+              <p className="mt-3 text-xs leading-5 text-[var(--ink3)]">
+                A calm place to learn English through listening, practice and
+                real conversations.
               </p>
             </div>
 
             <div>
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ink3)]">
-                Languages we teach
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--ink3)]">
+                Languages
               </p>
 
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-2 flex max-w-[400px] flex-wrap gap-2">
                 {languages.map((language, index) => (
                   <span
                     key={language}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-medium ${
+                    className={`rounded-full border px-3 py-1.5 text-[11px] font-medium ${
                       index === 0
                         ? "border-[var(--line2)] bg-[var(--brand-soft)] text-[var(--brand-ink)]"
-                        : "border-[var(--line)] bg-transparent text-[var(--ink2)]"
+                        : "border-[var(--line)] text-[var(--ink2)]"
                     }`}
                   >
                     {language}
-                    <span className="ml-1.5 text-[var(--ink3)]">
+
+                    <span className="ml-1 text-[var(--ink3)]">
                       {index === 0 ? "live" : "soon"}
                     </span>
                   </span>
                 ))}
               </div>
             </div>
-          </ScrollReveal>
+          </div>
+
+          <div className="mt-7 border-t border-[var(--line)] pt-4 text-[11px] text-[var(--ink3)]">
+            Learn a little. Listen carefully. Keep going.
+          </div>
         </div>
       </footer>
     </main>
   );
 }
+
