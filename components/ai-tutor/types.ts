@@ -1,14 +1,33 @@
-﻿export type TutorMode = {
-  id: string;
+﻿export type TutorModeId =
+  | "conversation"
+  | "grammar"
+  | "vocabulary"
+  | "speaking";
+
+export type TutorMode = {
+  id: TutorModeId;
   title: string;
   description: string;
   icon: string;
   prompt: string;
 };
 
+export type TutorModeItem = {
+  id: TutorModeId;
+  title: string;
+  description: string;
+  icon: string;
+};
+
 export type Message = {
   role: "user" | "assistant";
   content: string;
+};
+
+export type Progress = {
+  xp: number;
+  streak: number;
+  lastActivity: string | null;
 };
 
 export type ProgressSnapshot = {

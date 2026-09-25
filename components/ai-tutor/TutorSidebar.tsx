@@ -1,14 +1,14 @@
 ﻿"use client";
 
-import type { TutorMode, TutorModeItem } from "./types";
+import type { TutorModeId, TutorModeItem } from "./types";
 
 type Props = {
   modes: TutorModeItem[];
-  selectedMode: TutorMode;
-  onModeChange: (mode: TutorMode) => void;
+  selectedMode: TutorModeId;
+  onModeChange: (mode: TutorModeId) => void;
 };
 
-const icons: Record<TutorMode, string> = {
+const icons: Record<TutorModeId, string> = {
   conversation: "💬",
   grammar: "✏️",
   vocabulary: "📚",

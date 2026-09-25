@@ -18,7 +18,6 @@ export type Lesson = {
 export const levels: Level[] = ["A1", "A2", "B1", "B2", "C1"];
 
 export const topics = [
-  "Everything",
   "Daily life",
   "Travel",
   "Work",
@@ -130,27 +129,38 @@ export const levelInfo: Record<
   {
     title: string;
     subtitle: string;
+    description: string;
   }
 > = {
   A1: {
     title: "Foundations",
     subtitle: "Build your English from the ground up.",
+    description:
+      "Start with essential vocabulary, everyday phrases, and confidence-building practice that makes the basics feel natural.",
   },
   A2: {
     title: "Everyday English",
     subtitle: "Handle real conversations with confidence.",
+    description:
+      "Move beyond the basics and practice the phrases you need for travel, shopping, work, and daily communication.",
   },
   B1: {
     title: "Real Conversations",
     subtitle: "Speak naturally in everyday situations.",
+    description:
+      "Improve how you explain ideas, respond naturally, and manage common conversations without overthinking every sentence.",
   },
   B2: {
     title: "Express Yourself",
     subtitle: "Communicate clearly and confidently.",
+    description:
+      "Develop stronger opinions, clearer explanations, and more flexible English for work, relationships, and daily life.",
   },
   C1: {
     title: "Advanced Fluency",
     subtitle: "Master nuance, precision, and natural English.",
+    description:
+      "Sharpen your fluency, understand nuance, and communicate with the clarity and confidence of a highly proficient speaker.",
   },
 };
 

@@ -253,9 +253,9 @@ export default function Home() {
                       ["02", "Listen", false],
                       ["03", "Practice", true],
                       ["04", "Review", false],
-                    ].map(([number, label, active]) => (
+                    ].map(([number, label, active], index) => (
                       <div
-                        key={label}
+                        key={`${label}-${index}`}
                         className={`flex items-center gap-2 rounded-full border px-3 py-2 ${
                           active
                             ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-ink)]"
