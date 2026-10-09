@@ -1,304 +1,697 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { words } from "./data";
 
-type Word = {
-  word: string;
-  level: "A2" | "B1" | "B2";
-  pronunciation: string;
-  partOfSpeech: string;
-  definition: string;
-  translation: string;
+const levelStyle: Record<string, [string, string]> = {
+  A1: ["var(--brand-soft)", "var(--brand-ink)"],
+  A2: ["var(--voc-t)", "var(--voc)"],
+  B1: ["var(--cou-t)", "var(--cou)"],
+  B2: ["var(--pra-t)", "var(--pra)"],
+  C1: ["var(--brand-soft)", "var(--brand-ink)"],
 };
 
-const categories = ["All words", "Common", "Useful phrases", "Saved", "Recently opened"];
-const levels = ["Any level", "A2", "B1", "B2"];
+const card =
+  "group relative overflow-hidden rounded-[28px] border p-6 transition duration-300 hover:-translate-y-1";
 
-const words: Word[] = [
-  {
-    word: "curious",
-    level: "A2",
-    pronunciation: "/ˈkjʊə.ri.əs/",
-    partOfSpeech: "adjective",
-    definition: "Wanting to know or learn more about something.",
-    translation: "فضولي / متشوق للمعرفة",
-  },
-  {
-    word: "reckon",
-    level: "B1",
-    pronunciation: "/ˈrek.ən/",
-    partOfSpeech: "verb",
-    definition: "To think or believe something, often in casual speech.",
-    translation: "يعتقد / يظن",
-  },
-  {
-    word: "affordable",
-    level: "B1",
-    pronunciation: "/əˈfɔːr.də.bəl/",
-    partOfSpeech: "adjective",
-    definition: "Cheap enough that most people can pay for it.",
-    translation: "مقبول السعر / في المتناول",
-  },
-  {
-    word: "though",
-    level: "A2",
-    pronunciation: "/ðəʊ/",
-    partOfSpeech: "conjunction / adverb",
-    definition: "Used to add a contrasting idea, like “but” at the end of a sentence.",
-    translation: "مع ذلك / رغم أن",
-  },
-  {
-    word: "notice",
-    level: "A2",
-    pronunciation: "/ˈnəʊ.tɪs/",
-    partOfSpeech: "verb",
-    definition: "To see or become aware of something.",
-    translation: "يلاحظ / ينتبه",
-  },
-  {
-    word: "approach",
-    level: "B2",
-    pronunciation: "/əˈprəʊtʃ/",
-    partOfSpeech: "verb / noun",
-    definition: "To move nearer or begin to deal with something.",
-    translation: "يقترب / أسلوب",
-  },
-  {
-    word: "reliable",
-    level: "B1",
-    pronunciation: "/rɪˈlaɪ.ə.bəl/",
-    partOfSpeech: "adjective",
-    definition: "Someone or something that can be trusted to work well.",
-    translation: "موثوق به",
-  },
-  {
-    word: "figure out",
-    level: "B2",
-    pronunciation: "/ˈfɪɡ.ər aʊt/",
-    partOfSpeech: "phrasal verb",
-    definition: "To understand or solve something after thinking about it.",
-    translation: "يفهم / يجد الحل",
-  },
-  {
-    word: "eventually",
-    level: "B1",
-    pronunciation: "/ɪˈven.tʃu.ə.li/",
-    partOfSpeech: "adverb",
-    definition: "In the end, after some time.",
-    translation: "في النهاية / في نهاية الأمر",
-  },
-  {
-    word: "straightforward",
-    level: "B2",
-    pronunciation: "/ˌstreɪtˈfɔː.wəd/",
-    partOfSpeech: "adjective",
-    definition: "Easy to understand or do; not complicated.",
-    translation: "واضح / بسيط ومباشر",
-  },
-  {
-    word: "catch up",
-    level: "B1",
-    pronunciation: "/kætʃ ʌp/",
-    partOfSpeech: "phrasal verb",
-    definition: "To reach the same level as others, or to talk after time apart.",
-    translation: "يلحق بـ / يتبادل الأخبار",
-  },
-  {
-    word: "grateful",
-    level: "A2",
-    pronunciation: "/ˈɡreɪt.fəl/",
-    partOfSpeech: "adjective",
-    definition: "Feeling thankful for something someone did.",
-    translation: "ممتن / شاكر",
-  },
-];
+function read(key: string) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function readActivity() {
+  try {
+    const value = JSON.parse(
+      localStorage.getItem("lingoai-activity") || "{}"
+    );
+
+    return Array.isArray(value)
+      ? Object.fromEntries(value.map((d: string) => [d, 1]))
+      : value || {};
+  } catch {
+    return {};
+  }
+}
 
 export default function VocabularyPage() {
-  const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All words");
-  const [activeLevel, setActiveLevel] = useState("Any level");
-  const [savedWords, setSavedWords] = useState<string[]>([]);
+  const [query, setQuery] = useState("");
+  const [level, setLevel] = useState("All");
+  const [page, setPage] = useState(1);
+  const [learned, setLearned] = useState<string[]>([]);
+  const [activity, setActivity] = useState<Record<string, number>>({});
 
-  const filteredWords = useMemo(() => {
-    const query = search.trim().toLowerCase();
+  const perPage = 12;
 
-    return words.filter((word) => {
-      const matchesSearch =
-        !query ||
-        word.word.toLowerCase().includes(query) ||
-        word.definition.toLowerCase().includes(query);
-      const matchesLevel = activeLevel === "Any level" || word.level === activeLevel;
-      const matchesCategory = activeCategory !== "Saved" || savedWords.includes(word.word);
+  useEffect(() => {
+    const load = () => {
+      setLearned(read("lingoai-learned-words"));
+      setActivity(readActivity());
+    };
 
-      return matchesSearch && matchesLevel && matchesCategory;
+    load();
+
+    addEventListener("storage", load);
+    addEventListener("vocabulary-updated", load);
+
+    return () => {
+      removeEventListener("storage", load);
+      removeEventListener("vocabulary-updated", load);
+    };
+  }, []);
+
+  const data = useMemo(() => {
+    const filtered = words.filter((w) => {
+      const text =
+        `${w.word} ${w.meaning} ${w.arabic}`.toLowerCase();
+
+      return (
+        text.includes(query.toLowerCase()) &&
+        (level === "All" || w.level === level)
+      );
     });
-  }, [activeCategory, activeLevel, savedWords, search]);
 
-  function toggleSaved(word: string) {
-    setSavedWords((current) =>
-      current.includes(word)
-        ? current.filter((savedWord) => savedWord !== word)
-        : [...current, word],
-    );
-  }
+    const mastered = words.filter((w) =>
+      learned.includes(w.word)
+    ).length;
+
+    const week = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - 6 + i);
+
+      return {
+        label: d.toLocaleDateString("en-US", {
+          weekday: "narrow",
+        }),
+        on: Boolean(
+          activity[d.toISOString().slice(0, 10)]
+        ),
+      };
+    });
+
+    let streak = 0;
+
+    for (let i = 0; i < 365; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+
+      if (activity[d.toISOString().slice(0, 10)]) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+
+    const next =
+      [1, 3, 7, 14, 30].find((x) => x > streak) || 30;
+
+    return {
+      filtered,
+      mastered,
+      week,
+      streak,
+      next,
+      active: week.filter((x) => x.on).length,
+    };
+  }, [query, level, learned, activity]);
+
+  const totalPages = Math.ceil(
+    data.filtered.length / perPage
+  );
+
+  const visibleWords = data.filtered.slice(
+    (page - 1) * perPage,
+    page * perPage
+  );
+
+  const pct = Math.round(
+    (data.mastered / Math.max(words.length, 1)) * 100
+  );
 
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--ink)]">
-      <section className="page-container pb-16 pt-10 sm:pb-24 sm:pt-14">
-        <div className="max-w-[580px]">
-          <h1 className="font-display text-5xl font-medium tracking-[-0.03em] sm:text-6xl">
-            Vocabulary
-          </h1>
-          <p className="mt-3 text-base leading-6 text-[var(--ink2)] sm:text-lg">
-            Words you can hear, turn over, and keep. No account needed - saving
-            happens on this device.
-          </p>
-        </div>
+    <main className="min-h-screen bg-[var(--bg)] p-5 text-[var(--ink)] md:p-10">
+      <div className="mx-auto max-w-[1400px] space-y-7">
 
-        <label className="mt-7 flex h-13 max-w-[520px] items-center gap-3 rounded-full border border-[var(--line2)] bg-[var(--surf)] px-4 shadow-[var(--sh)] focus-within:border-[#0E8F69]">
-          <span className="h-2 w-2 shrink-0 rounded-full bg-[#0E8F69]" />
-          <span className="sr-only">Search vocabulary</span>
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search a word or meaning..."
-            className="w-full bg-transparent text-sm text-[var(--ink)] outline-none placeholder:text-[var(--ink3)]"
-          />
-        </label>
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <button
-              key={category}
-              type="button"
-              aria-pressed={activeCategory === category}
-              onClick={() => setActiveCategory(category)}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${activeCategory === category ? "border-[#0E8F69] bg-[#0E8F69] text-white" : "border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[#0E8F69] hover:text-[#0E8F69]"}`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          {levels.map((level) => (
-            <button
-              key={level}
-              type="button"
-              aria-pressed={activeLevel === level}
-              onClick={() => setActiveLevel(level)}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition ${activeLevel === level ? "border-[#0E8F69] bg-[#0E8F69] text-white" : "border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[#0E8F69] hover:text-[#0E8F69]"}`}
-            >
-              {level}
-            </button>
-          ))}
-          <span className="ml-1 text-sm text-[var(--ink3)]">
-            {filteredWords.length} words
-          </span>
-        </div>
-
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredWords.map((word) => {
-            const isSaved = savedWords.includes(word.word);
-
-            return (
-              <article key={word.word} className="sada-card flex min-h-[220px] flex-col rounded-[20px] p-5">
-                <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-[#E8FAF3] px-2.5 py-1 text-[11px] font-semibold text-[#0E8F69]">
-                    {word.level}
-                  </span>
-                  <button
-                    type="button"
-                    aria-label={`${isSaved ? "Remove" : "Save"} ${word.word}`}
-                    aria-pressed={isSaved}
-                    onClick={() => toggleSaved(word.word)}
-                    className={`text-lg leading-none transition hover:scale-110 ${isSaved ? "text-[#0E8F69]" : "text-[var(--ink3)]"}`}
-                  >
-                    {isSaved ? "★" : "☆"}
-                  </button>
-                </div>
-
-                <div className="mt-4 flex items-center gap-2">
-                  <h2 className="font-display text-[1.85rem] font-medium leading-none">
-                    {word.word}
-                  </h2>
-                  <button
-                    type="button"
-                    aria-label={`Hear ${word.word}`}
-                    data-speak={word.word}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E8FAF3] text-xs font-semibold text-[#0E8F69] transition hover:scale-105"
-                  >
-                    ▶
-                  </button>
-                </div>
-
-                <p className="mt-4 font-mono text-xs text-[#91A7C0]">
-                  {word.pronunciation} · {word.partOfSpeech}
-                </p>
-                <p className="mt-3 text-sm leading-6 text-[var(--ink2)]">
-                  {word.definition}
-                </p>
-
-                <p className="mt-auto border-t border-[var(--line)] pt-3 text-right text-sm text-[var(--ink)]" dir="rtl">
-                  {word.translation}
-                </p>
-              </article>
-            );
-          })}
-        </div>
-
-        {filteredWords.length === 0 && (
-          <div className="sada-card mt-7 p-8 text-center">
-            <h2 className="font-display text-3xl font-medium">No words found</h2>
-            <p className="mt-2 text-[var(--ink2)]">
-              Try another search, level, or saved-word filter.
-            </p>
-          </div>
-        )}
-      </section>
-
-      <footer className="border-t border-[var(--line)] bg-[var(--bg2)]">
-        <div className="page-container grid gap-8 py-10 sm:grid-cols-[0.9fr_1.6fr] sm:gap-12 sm:py-14">
-          <div className="max-w-[270px]">
-            <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#3D9BFF] text-xs font-semibold text-white">
-                ●
+        {/* HERO */}
+        <section
+          className="rounded-[36px] border p-7 md:p-10"
+          style={{
+            background: "var(--surf)",
+            borderColor: "var(--line)",
+            boxShadow: "var(--sh2)",
+          }}
+        >
+          <div className="grid items-center gap-8 lg:grid-cols-[1fr_280px]">
+            <div>
+              <span
+                className="rounded-full px-4 py-2 text-sm font-bold"
+                style={{
+                  background: "var(--brand-soft)",
+                  color: "var(--brand-ink)",
+                }}
+              >
+                Your personal vocabulary
               </span>
-              <span className="font-display text-lg font-semibold text-[var(--ink)]">
-                Sada
-              </span>
-            </Link>
-            <p className="mt-3 text-sm leading-5 text-[var(--ink3)]">
-              A calm place to learn languages. Built around listening,
-              curiosity and short honest feedback.
-            </p>
-          </div>
 
-          <div>
-            <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--ink3)]">
-              Languages we teach
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {[
-                { name: "English", status: "live", active: true },
-                { name: "Spanish", status: "soon", active: false },
-                { name: "French", status: "soon", active: false },
-                { name: "Turkish", status: "soon", active: false },
-                { name: "Japanese", status: "soon", active: false },
-              ].map((language) => (
-                <span
-                  key={language.name}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium ${language.active ? "border-[#D6E9FA] bg-[#F5FAFF] text-[#2477D1]" : "border-[var(--line)] bg-transparent text-[var(--ink2)]"}`}
-                >
-                  {language.name}
-                  <span className="ml-1.5 text-[var(--ink3)]">{language.status}</span>
+              <h1 className="mt-5 text-4xl font-black md:text-6xl">
+                Build an English
+                <br />
+                <span style={{ color: "var(--brand)" }}>
+                  you actually use.
                 </span>
-              ))}
+              </h1>
+
+              <p
+                className="mt-4 text-lg"
+                style={{ color: "var(--ink2)" }}
+              >
+                100 words. Real meaning. Real context.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-3">
+                {[
+                  [words.length, "Words"],
+                  [data.mastered, "Mastered"],
+                  [data.active, "Active days"],
+                ].map(([number, label]) => (
+                  <div
+                    key={String(label)}
+                    className="rounded-2xl border px-4 py-3"
+                    style={{
+                      background: "var(--surf2)",
+                      borderColor: "var(--line)",
+                    }}
+                  >
+                    <b className="text-xl">{number}</b>
+                    <p
+                      className="text-xs"
+                      style={{ color: "var(--ink2)" }}
+                    >
+                      {label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div
+              className="mx-auto h-56 w-56 rounded-full p-4"
+              style={{
+                background: `conic-gradient(var(--brand) ${pct}%,var(--line) ${pct}% 100%)`,
+              }}
+            >
+              <div
+                className="flex h-full w-full flex-col items-center justify-center rounded-full"
+                style={{ background: "var(--surf)" }}
+              >
+                <span
+                  className="text-sm"
+                  style={{ color: "var(--ink2)" }}
+                >
+                  Mastery
+                </span>
+
+                <b className="text-5xl">{pct}%</b>
+
+                <span
+                  className="text-xs"
+                  style={{ color: "var(--ink2)" }}
+                >
+                  {data.mastered}/{words.length} mastered
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      </footer>
+        </section>
+
+        {/* SEARCH + FILTER */}
+        <section
+          className="rounded-[28px] border p-4"
+          style={{
+            background: "var(--surf)",
+            borderColor: "var(--line)",
+          }}
+        >
+          <input
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setPage(1);
+            }}
+            placeholder="Search English or Arabic..."
+            className="w-full rounded-2xl px-5 py-4 outline-none"
+            style={{
+              background: "var(--surf2)",
+              color: "var(--ink)",
+            }}
+          />
+
+          <div className="mt-3 flex gap-2 overflow-x-auto">
+            {["All", "A1", "A2", "B1", "B2", "C1"].map(
+              (item) => (
+                <button
+                  key={item}
+                  onClick={() => {
+                    setLevel(item);
+                    setPage(1);
+                  }}
+                  className="rounded-xl px-4 py-3 text-sm font-bold"
+                  style={{
+                    background:
+                      level === item
+                        ? "var(--ink)"
+                        : "var(--surf2)",
+                    color:
+                      level === item
+                        ? "var(--bg)"
+                        : "var(--ink2)",
+                  }}
+                >
+                  {item}
+                </button>
+              )
+            )}
+          </div>
+        </section>
+
+        {/* WORDS */}
+        <section>
+          <div className="flex items-end justify-between">
+            <div>
+              <p
+                className="text-xs font-bold uppercase tracking-[.18em]"
+                style={{ color: "var(--ink3)" }}
+              >
+                Your collection
+              </p>
+
+              <h2 className="mt-2 text-3xl font-black">
+                {level === "All"
+                  ? "All words."
+                  : `${level} words.`}
+              </h2>
+            </div>
+
+            <span
+              className="text-sm font-bold"
+              style={{ color: "var(--ink2)" }}
+            >
+              {data.filtered.length} found
+            </span>
+          </div>
+
+          <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {visibleWords.map((w) => {
+              const c =
+                levelStyle[w.level] || levelStyle.A1;
+
+              const done = learned.includes(w.word);
+
+              return (
+                <article
+                  key={w.id}
+                  className={card}
+                  style={{
+                    background: "var(--surf)",
+                    borderColor: "var(--line)",
+                    boxShadow: "var(--sh)",
+                  }}
+                >
+                  <div
+                    className="absolute left-0 top-0 h-full w-1"
+                    style={{ background: c[1] }}
+                  />
+
+                  <div className="flex justify-between">
+                    <span
+                      className="rounded-lg px-3 py-1 text-xs font-bold"
+                      style={{
+                        background: c[0],
+                        color: c[1],
+                      }}
+                    >
+                      {w.level}
+                    </span>
+
+                    <span
+                      className="text-xs font-bold"
+                      style={{
+                        color: done
+                          ? "var(--voc)"
+                          : "var(--ink3)",
+                      }}
+                    >
+                      {done ? "Mastered" : "Learning"}
+                    </span>
+                  </div>
+
+                  <Link href={`/vocabulary/${w.word}`}>
+                    <h3 className="mt-7 text-4xl font-black">
+                      {w.word}
+                    </h3>
+
+                    <p
+                      className="mt-1 text-xl font-bold"
+                      style={{ color: c[1] }}
+                    >
+                      {w.arabic}
+                    </p>
+
+                    <p
+                      className="mt-2 text-sm"
+                      style={{ color: "var(--ink3)" }}
+                    >
+                      {w.pronunciation} · {w.type}
+                    </p>
+
+                    <p
+                      className="mt-5 text-sm leading-7"
+                      style={{ color: "var(--ink2)" }}
+                    >
+                      “{w.example}”
+                    </p>
+
+                    <p
+                      className="mt-5 border-t pt-4 text-sm font-bold"
+                      style={{
+                        borderColor: "var(--line)",
+                        color: c[1],
+                      }}
+                    >
+                      Open word →
+                    </p>
+                  </Link>
+                </article>
+              );
+            })}
+          </div>
+
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+              <button
+                onClick={() =>
+                  setPage((p) => Math.max(1, p - 1))
+                }
+                disabled={page === 1}
+                className="rounded-xl border px-4 py-2 text-sm font-bold disabled:opacity-40"
+                style={{
+                  background: "var(--surf)",
+                  borderColor: "var(--line)",
+                }}
+              >
+                ←
+              </button>
+
+              {Array.from(
+                { length: totalPages },
+                (_, i) => i + 1
+              ).map((number) => (
+                <button
+                  key={number}
+                  onClick={() => setPage(number)}
+                  className="h-10 min-w-10 rounded-xl text-sm font-bold"
+                  style={{
+                    background:
+                      page === number
+                        ? "var(--brand)"
+                        : "var(--surf)",
+                    color:
+                      page === number
+                        ? "white"
+                        : "var(--ink2)",
+                    border:
+                      page === number
+                        ? "1px solid transparent"
+                        : "1px solid var(--line)",
+                  }}
+                >
+                  {number}
+                </button>
+              ))}
+
+              <button
+                onClick={() =>
+                  setPage((p) =>
+                    Math.min(totalPages, p + 1)
+                  )
+                }
+                disabled={page === totalPages}
+                className="rounded-xl border px-4 py-2 text-sm font-bold disabled:opacity-40"
+                style={{
+                  background: "var(--surf)",
+                  borderColor: "var(--line)",
+                }}
+              >
+                →
+              </button>
+            </div>
+          )}
+
+          <p
+            className="mt-3 text-center text-xs"
+            style={{ color: "var(--ink3)" }}
+          >
+            Page {page} of {Math.max(totalPages, 1)} ·{" "}
+            {visibleWords.length} words shown
+          </p>
+        </section>
+
+        {/* STREAK + MILESTONE */}
+        <section className="grid gap-5 md:grid-cols-2">
+          <article
+            className={card}
+            style={{
+              background: "var(--surf)",
+              borderColor: "var(--line)",
+              boxShadow: "var(--sh)",
+            }}
+          >
+            <div
+              className="absolute left-0 top-0 h-full w-1"
+              style={{ background: "var(--brand)" }}
+            />
+
+            <span
+              className="rounded-lg px-3 py-1 text-xs font-bold"
+              style={{
+                background: "var(--brand-soft)",
+                color: "var(--brand-ink)",
+              }}
+            >
+              STREAK
+            </span>
+
+            <div className="mt-7 text-5xl font-black">
+              {data.streak}
+            </div>
+
+            <p style={{ color: "var(--ink2)" }}>
+              day streak 🔥
+            </p>
+
+            <div
+              className="mt-6 h-2 rounded-full"
+              style={{ background: "var(--surf2)" }}
+            >
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${(data.active / 7) * 100}%`,
+                  background: "var(--brand)",
+                }}
+              />
+            </div>
+
+            <div className="mt-3 flex justify-between text-sm font-bold">
+              <span style={{ color: "var(--ink2)" }}>
+                This week
+              </span>
+
+              <span style={{ color: "var(--brand)" }}>
+                {data.active}/7
+              </span>
+            </div>
+          </article>
+
+          <article
+            className={card}
+            style={{
+              background: "var(--surf)",
+              borderColor: "var(--line)",
+              boxShadow: "var(--sh)",
+            }}
+          >
+            <div
+              className="absolute left-0 top-0 h-full w-1"
+              style={{ background: "var(--voc)" }}
+            />
+
+            <span
+              className="rounded-lg px-3 py-1 text-xs font-bold"
+              style={{
+                background: "var(--voc-t)",
+                color: "var(--voc)",
+              }}
+            >
+              MILESTONE
+            </span>
+
+            <div className="mt-7 text-4xl font-black">
+              {data.streak} / {data.next}
+            </div>
+
+            <p style={{ color: "var(--ink2)" }}>
+              days to next milestone
+            </p>
+
+            <div
+              className="mt-6 h-2 rounded-full"
+              style={{ background: "var(--surf2)" }}
+            >
+              <div
+                className="h-full rounded-full"
+                style={{
+                  width: `${Math.min(
+                    100,
+                    (data.streak / data.next) * 100
+                  )}%`,
+                  background: "var(--voc)",
+                }}
+              />
+            </div>
+          </article>
+        </section>
+
+        {/* THIS WEEK */}
+        <section
+          className={card}
+          style={{
+            background: "var(--surf)",
+            borderColor: "var(--line)",
+            boxShadow: "var(--sh)",
+          }}
+        >
+          <div
+            className="absolute left-0 top-0 h-full w-1"
+            style={{ background: "var(--cou)" }}
+          />
+
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <span
+                  className="rounded-lg px-3 py-1.5 text-[11px] font-extrabold"
+                  style={{
+                    background: "var(--cou-t)",
+                    color: "var(--cou)",
+                  }}
+                >
+                  THIS WEEK
+                </span>
+
+                <span
+                  className="rounded-lg px-3 py-1.5 text-[11px] font-bold"
+                  style={{
+                    background: "var(--surf2)",
+                    color: "var(--ink2)",
+                  }}
+                >
+                  {data.active} / 7 active
+                </span>
+              </div>
+
+              <h2 className="mt-4 text-3xl font-black">
+                Your learning rhythm.
+              </h2>
+            </div>
+
+            <div>
+              <p
+                className="text-[10px] font-bold uppercase tracking-widest"
+                style={{ color: "var(--ink3)" }}
+              >
+                Consistency
+              </p>
+
+              <p
+                className="mt-1 text-3xl font-black"
+                style={{ color: "var(--cou)" }}
+              >
+                {Math.round((data.active / 7) * 100)}%
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid grid-cols-7 gap-2 sm:gap-3">
+            {data.week.map((day, i) => {
+              const today = i === 6;
+
+              return (
+                <div key={i} className="text-center">
+                  <span
+                    className="text-xs font-extrabold"
+                    style={{
+                      color: day.on
+                        ? "var(--cou)"
+                        : today
+                        ? "var(--brand)"
+                        : "var(--ink3)",
+                    }}
+                  >
+                    {day.label}
+                  </span>
+
+                  <div
+                    className="mt-3 flex aspect-square items-center justify-center rounded-[20px] border"
+                    style={{
+                      background: day.on
+                        ? "linear-gradient(145deg,var(--cou),var(--brand))"
+                        : today
+                        ? "var(--brand-soft)"
+                        : "var(--surf2)",
+                      borderColor: day.on
+                        ? "transparent"
+                        : today
+                        ? "var(--brand)"
+                        : "var(--line)",
+                    }}
+                  >
+                    <span
+                      className={day.on ? "text-xl font-black" : ""}
+                      style={{
+                        color: day.on
+                          ? "white"
+                          : "var(--ink3)",
+                      }}
+                    >
+                      {day.on ? "✓" : "·"}
+                    </span>
+                  </div>
+
+                  <p
+                    className="mt-2 text-[9px] font-bold"
+                    style={{
+                      color: today
+                        ? "var(--brand)"
+                        : "var(--ink3)",
+                    }}
+                  >
+                    {today
+                      ? "TODAY"
+                      : day.on
+                      ? "ACTIVE"
+                      : "REST"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

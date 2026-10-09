@@ -1,5 +1,4 @@
-
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Tajawal:wght@400;500;700;800;900&display=swap");
 
 @import "tailwindcss";
 
@@ -73,9 +72,15 @@
 
 /* =========================================================
    DARK MODE
+   Supports:
+   .dark
+   html.dark
+   data-theme="dark"
 ========================================================= */
 
-.dark {
+:root.dark,
+.dark,
+:root[data-theme="dark"] {
   color-scheme: dark;
 
   --bg: #0d1726;
@@ -154,6 +159,11 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
+body {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -162,11 +172,12 @@ body {
   color: var(--ink);
 
   font-family:
-    "IBM Plex Sans",
+    "Tajawal",
     system-ui,
     sans-serif;
 
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 
   transition:
@@ -180,7 +191,8 @@ section,
 article,
 header,
 footer,
-nav {
+nav,
+aside {
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease,
@@ -194,16 +206,20 @@ nav {
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   margin: 0;
 
   font-family:
-    "Newsreader",
-    Georgia,
-    serif;
+    "Tajawal",
+    system-ui,
+    sans-serif;
 
+  font-weight: 800;
   color: var(--ink);
   line-height: 1.08;
+  letter-spacing: -0.02em;
 }
 
 p {
@@ -216,7 +232,8 @@ button,
 input,
 textarea,
 select {
-  font: inherit;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 button {
@@ -235,8 +252,7 @@ a {
 [dir="rtl"],
 .font-arabic {
   font-family:
-    "IBM Plex Sans Arabic",
-    "IBM Plex Sans",
+    "Tajawal",
     sans-serif;
 }
 
@@ -449,7 +465,7 @@ a {
   background: var(--btn);
   color: var(--btn-ink);
 
-  font-weight: 600;
+  font-weight: 700;
 
   transition:
     transform 0.18s ease,
@@ -646,4 +662,3 @@ a {
     width: min(100% - 24px, 1200px);
   }
 }
-

@@ -1,223 +1,316 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
-type Course = {
-  title: string;
-  description: string;
-  level: "Beginner" | "Intermediate" | "Advanced";
-  lessons: number;
-  minutes: number;
-  icon: string;
-  color: string;
-  slug: string;
-};
-
-const courses: Course[] = [
+const courses = [
   {
-    title: "English for Travel",
-    description:
-      "Learn practical English for airports, hotels, restaurants, transportation, and everyday travel situations.",
-    level: "Beginner",
-    lessons: 12,
-    minutes: 120,
-    icon: "✈️",
-    color: "bg-cyan-100 dark:bg-cyan-950/50",
-    slug: "english-for-travel",
+    level: "A1",
+    title: "English Foundations",
+    desc: "Build strong basics through everyday English.",
+    color: "var(--brand)",
+    soft: "var(--brand-soft)",
   },
   {
-    title: "English for Work",
-    description:
-      "Build useful English skills for meetings, emails, presentations, teamwork, and workplace communication.",
-    level: "Intermediate",
-    lessons: 15,
-    minutes: 150,
-    icon: "💼",
-    color: "bg-amber-100 dark:bg-amber-950/50",
-    slug: "english-for-work",
+    level: "A2",
+    title: "Everyday English",
+    desc: "Talk about routines, travel and daily situations.",
+    color: "var(--voc)",
+    soft: "var(--voc-t)",
   },
   {
-    title: "Everyday Conversations",
-    description:
-      "Practice natural English conversations for everyday situations, from meeting people to talking about your daily life.",
-    level: "Beginner",
-    lessons: 10,
-    minutes: 100,
-    icon: "💬",
-    color: "bg-emerald-100 dark:bg-emerald-950/50",
-    slug: "everyday-conversations",
+    level: "B1",
+    title: "Confident English",
+    desc: "Improve communication and speak more naturally.",
+    color: "var(--cou)",
+    soft: "var(--cou-t)",
   },
   {
-    title: "News in Plain English",
-    description:
-      "Improve your English by reading and understanding real-world news using clear and accessible English.",
-    level: "Intermediate",
-    lessons: 14,
-    minutes: 140,
-    icon: "📰",
-    color: "bg-violet-100 dark:bg-violet-950/50",
-    slug: "news-in-plain-english",
+    level: "B2",
+    title: "Advanced Communication",
+    desc: "Express your ideas clearly in deeper conversations.",
+    color: "var(--pra)",
+    soft: "var(--pra-t)",
+  },
+  {
+    level: "C1",
+    title: "English Mastery",
+    desc: "Refine advanced English and communicate naturally.",
+    color: "var(--brand)",
+    soft: "var(--brand-soft)",
   },
 ];
 
-const levels = ["All levels", "Beginner", "Intermediate", "Advanced"];
-
 export default function CoursesPage() {
+  const [active, setActive] = useState("All");
+
+  const shown =
+    active === "All"
+      ? courses
+      : courses.filter((course) => course.level === active);
+
   return (
-    <main className="min-h-screen bg-[var(--bg)] px-5 pb-20 pt-10 text-[var(--ink)] transition-colors duration-300 sm:px-8 lg:px-12">
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <section className="mb-10">
-          <div className="max-w-3xl">
-            <span className="inline-flex rounded-full border border-[var(--line)] bg-[var(--brand-soft)] px-4 py-2 text-sm font-bold text-[var(--brand-ink)] transition-colors">
-              LEARNING COURSES
+    <main
+      className="min-h-screen bg-[var(--bg)] px-5 py-8 text-[var(--ink)] md:px-10"
+    >
+      <div className="mx-auto max-w-[1400px] space-y-8">
+
+        {/* HERO */}
+        <section
+          className="relative overflow-hidden rounded-[36px] border p-8 md:p-12"
+          style={{
+            background: "var(--surf)",
+            borderColor: "var(--line)",
+            boxShadow: "var(--sh2)",
+          }}
+        >
+          <div
+            className="absolute -right-24 -top-24 h-72 w-72 rounded-full blur-3xl"
+            style={{ background: "var(--cou-t)" }}
+          />
+
+          <div className="relative max-w-3xl">
+            <span
+              className="inline-flex rounded-full px-4 py-2 text-xs font-extrabold uppercase tracking-wider"
+              style={{
+                background: "var(--cou-t)",
+                color: "var(--cou)",
+              }}
+            >
+              Learning paths
             </span>
 
-            <h1 className="mt-5 text-4xl font-black tracking-tight text-[var(--ink)] sm:text-5xl lg:text-6xl">
-              Learn English your way.
+            <h1 className="mt-6 text-5xl font-black leading-[1.05] md:text-7xl">
+              Choose your
+              <br />
+              <span style={{ color: "var(--cou)" }}>
+                next course.
+              </span>
             </h1>
 
-            <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--ink2)] sm:text-lg">
-              Choose a course that matches your goals and improve your English
-              through practical lessons, real conversations, listening practice,
-              and useful vocabulary.
+            <p
+              className="mt-5 max-w-2xl text-lg leading-8"
+              style={{ color: "var(--ink2)" }}
+            >
+              Structured English courses designed to move you
+              from your current level to the next one.
             </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              {[
+                ["5", "Levels"],
+                ["50", "Lessons"],
+                ["A1–C1", "Path"],
+              ].map(([num, label]) => (
+                <div
+                  key={label}
+                  className="rounded-2xl border px-5 py-4"
+                  style={{
+                    background: "var(--surf2)",
+                    borderColor: "var(--line)",
+                  }}
+                >
+                  <b className="text-xl">{num}</b>
+                  <p
+                    className="text-xs"
+                    style={{ color: "var(--ink2)" }}
+                  >
+                    {label}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Level Filters */}
-        <section className="mb-10">
-          <div className="flex flex-wrap gap-3">
-            {levels.map((level, index) => (
+        {/* FILTER */}
+        <section
+          className="flex flex-col gap-4 rounded-[28px] border p-4 sm:flex-row sm:items-center sm:justify-between"
+          style={{
+            background: "var(--surf)",
+            borderColor: "var(--line)",
+          }}
+        >
+          <div>
+            <p
+              className="text-xs font-bold uppercase tracking-[.18em]"
+              style={{ color: "var(--ink3)" }}
+            >
+              Your journey
+            </p>
+
+            <h2 className="mt-1 text-2xl font-black">
+              Explore courses.
+            </h2>
+          </div>
+
+          <div
+            className="flex gap-1 overflow-x-auto rounded-full p-1"
+            style={{ background: "var(--surf2)" }}
+          >
+            {["All", "A1", "A2", "B1", "B2", "C1"].map((item) => (
               <button
-                key={level}
-                type="button"
-                className={[
-                  "rounded-full px-5 py-2.5 text-sm font-bold transition-all duration-300",
-                  index === 0
-                    ? "bg-[var(--btn)] text-[var(--btn-ink)] shadow-sm hover:-translate-y-0.5 hover:shadow-[var(--sh)]"
-                    : "border border-[var(--line2)] bg-[var(--surf)] text-[var(--ink2)] hover:border-[var(--brand)] hover:text-[var(--brand)]",
-                ].join(" ")}
+                key={item}
+                onClick={() => setActive(item)}
+                className="rounded-full px-4 py-2 text-xs font-bold transition"
+                style={{
+                  background:
+                    active === item
+                      ? "var(--ink)"
+                      : "transparent",
+                  color:
+                    active === item
+                      ? "var(--bg)"
+                      : "var(--ink2)",
+                }}
               >
-                {level}
+                {item}
               </button>
             ))}
           </div>
         </section>
 
-        {/* Courses */}
+        {/* COURSES */}
         <section>
-          <div className="mb-6 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-bold text-[var(--brand)]">
-                EXPLORE COURSES
-              </p>
-
-              <h2 className="mt-1 text-2xl font-black text-[var(--ink)]">
-                Pick your next course
-              </h2>
-            </div>
-
-            <span className="hidden rounded-full border border-[var(--line)] bg-[var(--surf)] px-4 py-2 text-sm font-semibold text-[var(--ink2)] shadow-sm sm:block">
-              {courses.length} courses
-            </span>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            {courses.map((course) => (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {shown.map((course, index) => (
               <Link
-                key={course.slug}
-                href={`/courses/${course.slug}`}
-                className="group block"
+                key={course.level}
+                href={`/courses/${course.level.toLowerCase()}`}
+                className="group relative overflow-hidden rounded-[30px] border p-6 transition duration-300 hover:-translate-y-1"
+                style={{
+                  background: "var(--surf)",
+                  borderColor: "var(--line)",
+                  boxShadow: "var(--sh)",
+                }}
               >
-                <article className="h-full overflow-hidden rounded-[30px] border border-[var(--line)] bg-[var(--surf)] p-7 shadow-[var(--sh)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--brand)]/30 hover:shadow-[var(--sh2)]">
-                  {/* Top */}
-                  <div className="flex items-start justify-between gap-5">
-                    <div
-                      className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-3xl ${course.color}`}
-                    >
-                      {course.icon}
-                    </div>
+                <div
+                  className="absolute left-0 top-0 h-full w-1"
+                  style={{ background: course.color }}
+                />
 
-                    <span className="rounded-full border border-[var(--line)] bg-[var(--surf2)] px-3.5 py-2 text-xs font-bold text-[var(--ink2)]">
+                <div
+                  className="absolute -right-10 -top-10 h-32 w-32 rounded-full opacity-50 blur-3xl"
+                  style={{ background: course.soft }}
+                />
+
+                <div className="relative">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="flex h-14 w-14 items-center justify-center rounded-2xl text-sm font-black text-white"
+                      style={{ background: course.color }}
+                    >
                       {course.level}
                     </span>
-                  </div>
 
-                  {/* Content */}
-                  <div className="mt-7">
-                    <h3 className="text-2xl font-black text-[var(--ink)] transition-colors duration-300 group-hover:text-[var(--brand)]">
-                      {course.title}
-                    </h3>
-
-                    <p className="mt-3 text-sm leading-7 text-[var(--ink2)]">
-                      {course.description}
-                    </p>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="mt-7 flex flex-wrap gap-3">
-                    <div className="rounded-xl border border-[var(--line)] bg-[var(--surf2)] px-4 py-3">
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--ink3)]">
-                        Lessons
-                      </p>
-
-                      <p className="mt-1 text-sm font-black text-[var(--ink)]">
-                        {course.lessons}
-                      </p>
-                    </div>
-
-                    <div className="rounded-xl border border-[var(--line)] bg-[var(--surf2)] px-4 py-3">
-                      <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--ink3)]">
-                        Time
-                      </p>
-
-                      <p className="mt-1 text-sm font-black text-[var(--ink)]">
-                        {course.minutes} min
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="mt-7 flex items-center justify-between border-t border-[var(--line)] pt-5">
-                    <span className="text-sm font-bold text-[var(--ink)]">
-                      Start learning
-                    </span>
-
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--brand-soft)] text-lg font-bold text-[var(--brand)] transition-all duration-300 group-hover:bg-[var(--brand)] group-hover:text-[var(--btn-ink)]">
-                      →
+                    <span
+                      className="rounded-full px-3 py-1 text-[10px] font-extrabold"
+                      style={{
+                        background: course.soft,
+                        color: course.color,
+                      }}
+                    >
+                      COURSE {index + 1}
                     </span>
                   </div>
-                </article>
+
+                  <h3 className="mt-7 text-2xl font-black">
+                    {course.title}
+                  </h3>
+
+                  <p
+                    className="mt-3 min-h-[56px] text-sm leading-7"
+                    style={{ color: "var(--ink2)" }}
+                  >
+                    {course.desc}
+                  </p>
+
+                  <div
+                    className="mt-6 h-2 rounded-full"
+                    style={{ background: "var(--surf2)" }}
+                  >
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: index === 0 ? "10%" : "0%",
+                        background: course.color,
+                      }}
+                    />
+                  </div>
+
+                  <div className="mt-2 flex justify-between text-xs font-bold">
+                    <span style={{ color: "var(--ink3)" }}>
+                      10 lessons
+                    </span>
+
+                    <span style={{ color: course.color }}>
+                      {index === 0 ? "10%" : "Not started"}
+                    </span>
+                  </div>
+
+                  <div
+                    className="mt-6 flex items-center justify-between rounded-2xl px-4 py-3 text-sm font-extrabold transition group-hover:translate-x-1"
+                    style={{
+                      background: course.soft,
+                      color: course.color,
+                    }}
+                  >
+                    Open course
+                    <span>→</span>
+                  </div>
+                </div>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* Bottom CTA */}
-        <section className="mt-10 overflow-hidden rounded-[32px] border border-[var(--line)] bg-[var(--surf2)] p-8 text-[var(--ink)] shadow-[var(--sh)] transition-all duration-300 sm:p-10">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl">
-              <span className="text-sm font-bold text-[var(--brand)]">
-                KEEP LEARNING
-              </span>
+        {/* PATH */}
+        <section
+          className="rounded-[30px] border p-6 md:p-8"
+          style={{
+            background: "var(--surf)",
+            borderColor: "var(--line)",
+            boxShadow: "var(--sh)",
+          }}
+        >
+          <p
+            className="text-xs font-bold uppercase tracking-[.18em]"
+            style={{ color: "var(--cou)" }}
+          >
+            Your path
+          </p>
 
-              <h2 className="mt-2 text-2xl font-black text-[var(--ink)] sm:text-3xl">
-                Build your English skills one lesson at a time.
-              </h2>
+          <div className="mt-6 grid gap-3 md:grid-cols-5">
+            {courses.map((course, i) => (
+              <div key={course.level} className="relative">
+                <Link
+                  href={`/courses/${course.level.toLowerCase()}`}
+                  className="block rounded-2xl border p-4 text-center transition hover:-translate-y-1"
+                  style={{
+                    background: "var(--surf2)",
+                    borderColor: "var(--line)",
+                  }}
+                >
+                  <span
+                    className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl text-xs font-black text-white"
+                    style={{ background: course.color }}
+                  >
+                    {course.level}
+                  </span>
 
-              <p className="mt-3 leading-7 text-[var(--ink2)]">
-                Practice regularly and turn every lesson into real-world
-                English you can use.
-              </p>
-            </div>
+                  <p className="mt-3 text-sm font-extrabold">
+                    {course.title}
+                  </p>
+                </Link>
 
-            <Link
-              href="/lessons"
-              className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-[var(--btn)] px-7 py-4 font-bold text-[var(--btn-ink)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              Explore Lessons →
-            </Link>
+                {i < 4 && (
+                  <span
+                    className="absolute -right-3 top-1/2 hidden h-px w-6 md:block"
+                    style={{ background: "var(--line2)" }}
+                  />
+                )}
+              </div>
+            ))}
           </div>
         </section>
       </div>

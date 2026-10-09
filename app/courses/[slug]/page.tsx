@@ -1,59 +1,78 @@
-
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 
 type Course = {
+  slug: string;
+  level: string;
   title: string;
   description: string;
-  level: string;
+  color: string;
+  soft: string;
   lessons: number;
   minutes: number;
   icon: string;
 };
 
-const courses: Record<string, Course> = {
-  "english-for-travel": {
-    title: "English for Travel",
-    description:
-      "Learn practical English for airports, hotels, restaurants, transportation, and everyday situations while traveling.",
-    level: "Beginner",
-    lessons: 12,
-    minutes: 120,
-    icon: "✈️",
+const courses: Course[] = [
+  {
+    slug: "a1",
+    level: "A1",
+    title: "English Foundations",
+    description: "Build strong basics through everyday English.",
+    color: "var(--brand)",
+    soft: "var(--brand-soft)",
+    lessons: 10,
+    minutes: 100,
+    icon: "🌱",
   },
-
-  "english-for-work": {
-    title: "English for Work",
-    description:
-      "Build useful English skills for meetings, emails, presentations, teamwork, and everyday communication at work.",
-    level: "Intermediate",
-    lessons: 15,
-    minutes: 150,
-    icon: "💼",
-  },
-
-  "everyday-conversations": {
-    title: "Everyday Conversations",
-    description:
-      "Practice natural English conversations for everyday situations, from meeting people to talking about your daily life.",
-    level: "Beginner",
+  {
+    slug: "a2",
+    level: "A2",
+    title: "Everyday English",
+    description: "Talk about routines, travel and daily situations.",
+    color: "var(--voc)",
+    soft: "var(--voc-t)",
     lessons: 10,
     minutes: 100,
     icon: "💬",
   },
-
-  "news-in-plain-english": {
-    title: "News in Plain English",
-    description:
-      "Improve your English by reading and understanding real-world news using clear and accessible English.",
-    level: "Intermediate",
-    lessons: 14,
-    minutes: 140,
-    icon: "📰",
+  {
+    slug: "b1",
+    level: "B1",
+    title: "Confident English",
+    description: "Improve communication and speak more naturally.",
+    color: "var(--cou)",
+    soft: "var(--cou-t)",
+    lessons: 10,
+    minutes: 110,
+    icon: "🚀",
   },
-};
+  {
+    slug: "b2",
+    level: "B2",
+    title: "Advanced Communication",
+    description: "Express your ideas clearly in deeper conversations.",
+    color: "var(--pra)",
+    soft: "var(--pra-t)",
+    lessons: 10,
+    minutes: 120,
+    icon: "🧠",
+  },
+  {
+    slug: "c1",
+    level: "C1",
+    title: "English Mastery",
+    description: "Refine advanced English and communicate naturally.",
+    color: "var(--brand)",
+    soft: "var(--brand-soft)",
+    lessons: 10,
+    minutes: 130,
+    icon: "🏆",
+  },
+];
 
 const lessonTitles = [
   "Getting Started",
@@ -61,40 +80,80 @@ const lessonTitles = [
   "Common Expressions",
   "Listening Practice",
   "Real Conversations",
-  "Final Practice",
+  "Grammar in Context",
+  "Speaking Practice",
+  "Reading Skills",
+  "Real-World English",
+  "Final Challenge",
+];
+
+const features = [
+  ["✦", "Practical English", "Learn expressions you can actually use."],
+  ["◉", "Listening Practice", "Train your ear with natural English."],
+  ["↗", "Real Conversations", "Practice realistic everyday dialogue."],
 ];
 
 export default function CoursePage() {
-  const params = useParams();
-  const slug = params.slug as string;
+  const params = useParams<{ slug: string }>();
 
-  const course = courses[slug];
+  const slug = Array.isArray(params.slug)
+    ? params.slug[0]
+    : params.slug;
+
+  const course = courses.find(
+    (item) => item.slug === decodeURIComponent(slug || "").toLowerCase()
+  );
+
+  useEffect(() => {
+    const items = document.querySelectorAll(".reveal");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("show");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+
+    items.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, []);
 
   if (!course) {
     return (
-      <main className="min-h-screen bg-[#f7f7f4] px-6 py-12">
-        <div className="mx-auto max-w-6xl">
+      <main className="min-h-screen bg-[var(--bg)] p-6">
+        <div className="mx-auto max-w-4xl pt-16">
           <Link
             href="/courses"
-            className="inline-flex items-center text-sm font-semibold text-[#18b9cf] transition hover:opacity-70"
+            className="font-bold text-[var(--ink2)] hover:text-[var(--brand)]"
           >
             ← Back to Courses
           </Link>
 
-          <section className="mt-10 rounded-4xl bg-white p-8 shadow-sm md:p-12">
-            <h1 className="text-4xl font-black text-[#172033]">
+          <section className="mt-8 rounded-[32px] border border-[var(--line)] bg-[var(--surf)] p-8 shadow-[var(--sh2)]">
+            <div className="text-5xl">📚</div>
+
+            <h1 className="mt-5 text-4xl font-black text-[var(--ink)]">
               Course not found
             </h1>
 
-            <p className="mt-4 text-gray-600">
-              The course you are looking for does not exist.
+            <p className="mt-3 text-[var(--ink2)]">
+              The course URL does not match any available course.
+            </p>
+
+            <p className="mt-2 text-sm text-[var(--ink3)]">
+              Current URL: {slug || "empty"}
             </p>
 
             <Link
               href="/courses"
-              className="mt-8 inline-flex rounded-2xl bg-[#18b9cf] px-7 py-4 font-bold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
+              className="mt-7 inline-flex rounded-2xl bg-[var(--btn)] px-6 py-3 font-black text-[var(--btn-ink)]"
             >
-              Browse Courses
+              Browse Courses →
             </Link>
           </section>
         </div>
@@ -103,214 +162,237 @@ export default function CoursePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f7f4] px-6 py-12">
-      <div className="mx-auto max-w-6xl">
-        {/* Back */}
-        <Link
-          href="/courses"
-          className="inline-flex items-center text-sm font-semibold text-[#18b9cf] transition hover:opacity-70"
-        >
-          ← Back to Courses
-        </Link>
+    <main className="min-h-screen overflow-hidden bg-[var(--bg)] px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
 
-        {/* Hero */}
-        <section className="mt-10 overflow-hidden rounded-4xl bg-white shadow-sm">
-          <div className="p-8 md:p-12">
-            <div className="max-w-4xl">
-              <div className="flex flex-wrap items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#e8f9fc] text-3xl">
+        {/* BACK */}
+        <div className="reveal mb-6">
+          <Link
+            href="/courses"
+            className="font-bold text-[var(--ink2)] hover:text-[var(--brand)]"
+          >
+            ← Back to Courses
+          </Link>
+        </div>
+
+        {/* HERO */}
+        <section className="reveal relative overflow-hidden rounded-[36px] border border-[var(--line)] bg-[var(--surf)] p-6 shadow-[var(--sh2)] sm:p-10">
+          <div
+            className="absolute -right-20 -top-20 h-72 w-72 rounded-full blur-3xl"
+            style={{ background: course.soft }}
+          />
+
+          <div
+            className="absolute -bottom-24 -left-20 h-64 w-64 rounded-full blur-3xl"
+            style={{ background: course.soft }}
+          />
+
+          <div className="relative grid gap-10 lg:grid-cols-[1.5fr_.5fr]">
+            <div>
+              <div className="mb-6 flex items-center gap-3">
+                <div
+                  className="flex h-16 w-16 items-center justify-center rounded-[20px] text-3xl"
+                  style={{ background: course.soft }}
+                >
                   {course.icon}
                 </div>
 
-                <span className="inline-flex rounded-full bg-[#e8f9fc] px-4 py-2 text-sm font-bold text-[#18b9cf]">
+                <span
+                  className="rounded-full px-4 py-2 text-xs font-black"
+                  style={{
+                    background: course.soft,
+                    color: course.color,
+                  }}
+                >
                   {course.level}
                 </span>
               </div>
 
-              <h1 className="mt-6 text-4xl font-black tracking-tight text-[#172033] md:text-6xl">
+              <p
+                className="text-sm font-black uppercase tracking-[.2em]"
+                style={{ color: course.color }}
+              >
+                LingoAI Course
+              </p>
+
+              <h1 className="mt-3 text-4xl font-black text-[var(--ink)] sm:text-6xl">
                 {course.title}
               </h1>
 
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-gray-600">
+              <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--ink2)]">
                 {course.description}
               </p>
 
-              {/* Stats */}
-              <div className="mt-8 flex flex-wrap gap-4">
-                <div className="rounded-2xl bg-[#f7f7f4] px-5 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Level
-                  </p>
-
-                  <p className="mt-1 font-bold text-[#172033]">
-                    {course.level}
-                  </p>
-                </div>
-
-                <div className="rounded-2xl bg-[#f7f7f4] px-5 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Lessons
-                  </p>
-
-                  <p className="mt-1 font-bold text-[#172033]">
-                    {course.lessons}
-                  </p>
-                </div>
-
-                <div className="rounded-2xl bg-[#f7f7f4] px-5 py-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                    Learning Time
-                  </p>
-
-                  <p className="mt-1 font-bold text-[#172033]">
-                    {course.minutes} min
-                  </p>
-                </div>
-              </div>
-
-              {/* Buttons */}
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-8 flex flex-wrap gap-3">
                 <Link
-                  href="/lessons"
-                  className="rounded-2xl bg-[#18b9cf] px-7 py-4 font-bold text-white transition hover:-translate-y-0.5 hover:shadow-lg"
+                  href={`/courses/${course.slug}`}
+                  className="rounded-2xl bg-[var(--btn)] px-6 py-3.5 font-black text-[var(--btn-ink)] transition hover:-translate-y-1"
                 >
-                  Start Course
+                  Start Course →
                 </Link>
 
                 <Link
                   href="/courses"
-                  className="rounded-2xl border border-gray-200 bg-white px-7 py-4 font-bold text-[#172033] transition hover:bg-gray-50"
+                  className="rounded-2xl border border-[var(--line2)] bg-[var(--surf2)] px-6 py-3.5 font-black text-[var(--ink)] transition hover:-translate-y-1"
                 >
                   All Courses
                 </Link>
               </div>
             </div>
+
+            {/* STATS */}
+            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+              {[
+                ["Level", course.level],
+                ["Lessons", course.lessons],
+                ["Learning Time", `${course.minutes} min`],
+              ].map(([label, value]) => (
+                <div
+                  key={label}
+                  className="rounded-[24px] border border-[var(--line)] bg-[var(--surf2)] p-5"
+                >
+                  <p className="text-xs font-black uppercase tracking-widest text-[var(--ink3)]">
+                    {label}
+                  </p>
+                  <p className="mt-2 text-2xl font-black text-[var(--ink)]">
+                    {value}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* Features */}
-        <section className="mt-8 grid gap-6 md:grid-cols-3">
-          <div className="rounded-4xl bg-white p-7 shadow-sm">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e8f9fc] text-xl">
-              ✈️
-            </div>
+        {/* FEATURES */}
+        <section className="mt-6 grid gap-4 md:grid-cols-3">
+          {features.map(([icon, title, text], index) => (
+            <div
+              key={title}
+              className="reveal rounded-[28px] border border-[var(--line)] bg-[var(--surf)] p-6 shadow-[var(--sh)] transition hover:-translate-y-1"
+              style={{ transitionDelay: `${index * 100}ms` }}
+            >
+              <div
+                className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl text-xl font-black"
+                style={{
+                  background: course.soft,
+                  color: course.color,
+                }}
+              >
+                {icon}
+              </div>
 
-            <h2 className="mt-5 text-xl font-black text-[#172033]">
-              Practical English
-            </h2>
-
-            <p className="mt-3 leading-7 text-gray-600">
-              Learn useful expressions that you can actually use in real-life
-              situations.
-            </p>
-          </div>
-
-          <div className="rounded-4xl bg-white p-7 shadow-sm">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#fff4d8] text-xl">
-              🎧
-            </div>
-
-            <h2 className="mt-5 text-xl font-black text-[#172033]">
-              Listening Practice
-            </h2>
-
-            <p className="mt-3 leading-7 text-gray-600">
-              Improve your listening skills with short conversations and
-              interactive exercises.
-            </p>
-          </div>
-
-          <div className="rounded-4xl bg-white p-7 shadow-sm">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e9f8ef] text-xl">
-              💬
-            </div>
-
-            <h2 className="mt-5 text-xl font-black text-[#172033]">
-              Real Conversations
-            </h2>
-
-            <p className="mt-3 leading-7 text-gray-600">
-              Practice speaking and build confidence through realistic English
-              conversations.
-            </p>
-          </div>
-        </section>
-
-        {/* Course Content */}
-        <section className="mt-8 rounded-4xl bg-white p-8 shadow-sm md:p-10">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-            <div>
-              <p className="text-sm font-bold text-[#18b9cf]">
-                COURSE CONTENT
-              </p>
-
-              <h2 className="mt-2 text-3xl font-black text-[#172033]">
-                What you will learn
+              <h2 className="text-xl font-black text-[var(--ink)]">
+                {title}
               </h2>
-            </div>
 
-            <span className="rounded-full bg-[#f7f7f4] px-4 py-2 text-sm font-bold text-gray-600">
-              {course.lessons} lessons
-            </span>
+              <p className="mt-2 leading-7 text-[var(--ink2)]">
+                {text}
+              </p>
+            </div>
+          ))}
+        </section>
+
+        {/* COURSE CONTENT */}
+        <section className="reveal mt-6 overflow-hidden rounded-[32px] border border-[var(--line)] bg-[var(--surf)] shadow-[var(--sh)]">
+          <div className="border-b border-[var(--line)] p-6 sm:p-8">
+            <p
+              className="text-xs font-black uppercase tracking-[.2em]"
+              style={{ color: course.color }}
+            >
+              Course Content
+            </p>
+
+            <h2 className="mt-2 text-3xl font-black text-[var(--ink)]">
+              What you will learn
+            </h2>
+
+            <p className="mt-2 text-[var(--ink2)]">
+              Build your English step by step through practical lessons.
+            </p>
           </div>
 
-          <div className="mt-8 space-y-3">
-            {Array.from({
-              length: Math.min(course.lessons, lessonTitles.length),
-            }).map((_, index) => (
+          <div className="divide-y divide-[var(--line)]">
+            {Array.from({ length: course.lessons }).map((_, index) => (
               <Link
                 key={index}
-                href="/lessons"
-                className="flex items-center gap-4 rounded-2xl border border-gray-100 p-4 transition hover:-translate-y-0.5 hover:bg-[#f9ffff] hover:shadow-sm"
+                href={`/courses/${course.slug}`}
+                className="group flex items-center gap-4 px-6 py-5 transition hover:bg-[var(--surf2)] sm:px-8"
               >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#e8f9fc] font-black text-[#18b9cf]">
-                  {index + 1}
+                <div
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-sm font-black"
+                  style={{
+                    background: course.soft,
+                    color: course.color,
+                  }}
+                >
+                  {String(index + 1).padStart(2, "0")}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-bold text-[#172033]">
+                  <p className="font-black text-[var(--ink)]">
                     {lessonTitles[index]}
-                  </h3>
+                  </p>
 
-                  <p className="mt-1 text-sm text-gray-500">
-                    Interactive English lesson
+                  <p className="mt-1 text-sm text-[var(--ink2)]">
+                    Guided practice and real-world English
                   </p>
                 </div>
 
-                <span className="text-xl text-gray-400">→</span>
+                <span
+                  className="text-xl transition group-hover:translate-x-1"
+                  style={{ color: course.color }}
+                >
+                  →
+                </span>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* Bottom CTA */}
-        <section className="mt-8 overflow-hidden rounded-4xl bg-[#172033] p-8 text-white md:p-10">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl">
-              <span className="text-sm font-bold text-[#18b9cf]">
-                KEEP LEARNING
-              </span>
+        {/* CTA */}
+        <section
+          className="reveal relative mt-6 overflow-hidden rounded-[32px] p-7 shadow-[var(--sh2)] sm:p-9"
+          style={{ background: "var(--ai-card)" }}
+        >
+          <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[.2em] text-[var(--ai-on)]">
+                Ready to start?
+              </p>
 
-              <h2 className="mt-2 text-2xl font-black md:text-3xl">
-                Build your English skills one lesson at a time.
+              <h2 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+                Turn this course into real English confidence.
               </h2>
 
-              <p className="mt-3 leading-7 text-gray-300">
-                Practice regularly and turn every lesson into real-world
-                English you can use.
+              <p className="mt-3 text-white/70">
+                Start learning and build your skills step by step.
               </p>
             </div>
 
             <Link
-              href="/lessons"
-              className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-[#18b9cf] px-7 py-4 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#14a9bd] hover:shadow-lg"
+              href={`/courses/${course.slug}`}
+              className="rounded-2xl bg-white px-6 py-3.5 font-black text-[#172033] transition hover:-translate-y-1"
             >
-              Explore Lessons →
+              Start Learning →
             </Link>
           </div>
         </section>
       </div>
+
+      <style jsx global>{`
+        .reveal {
+          opacity: 0;
+          transform: translateY(28px);
+          transition:
+            opacity 700ms ease,
+            transform 700ms cubic-bezier(.22,1,.36,1);
+        }
+
+        .reveal.show {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      `}</style>
     </main>
   );
 }
-
