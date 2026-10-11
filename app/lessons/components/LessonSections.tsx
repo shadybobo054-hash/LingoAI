@@ -2,29 +2,19 @@
 "use client";
 
 import Link from "next/link";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-  type CSSProperties,
-} from "react";
-
+import { useEffect, useRef, useState } from "react";
 import { levels, topics, type Lesson, type Level } from "../data";
 import { TopicButton } from "./LessonButtons";
 
 const topicOptions = topics.filter((topic) => topic !== "Everything");
+const palette = ["#3D9BFF", "#8B5CF6", "#10B981", "#F59E0B", "#F472B6", "#06B6D4"];
 
 function ScrollReveal({
   children,
   className = "",
-  delay = 0,
-  direction = "right",
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
   className?: string;
-  delay?: number;
-  direction?: "right" | "left" | "up";
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -33,11 +23,6 @@ function ScrollReveal({
     const element = ref.current;
     if (!element) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setVisible(true);
-      return;
-    }
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -45,31 +30,99 @@ function ScrollReveal({
           observer.unobserve(element);
         }
       },
-      { threshold: 0.08, rootMargin: "0px 0px -25px 0px" }
+      { threshold: 0.08 }
     );
 
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
 
-  const hiddenTransform = {
-    right: "translateX(38px)",
-    left: "translateX(-38px)",
-    up: "translateY(25px)",
-  }[direction];
-
   return (
     <div
       ref={ref}
-      className={className}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translate(0, 0)" : hiddenTransform,
-        transition: `opacity 650ms ease ${delay}ms, transform 650ms cubic-bezier(0.22, 1, 0.36, 1) ${delay}ms`,
-        willChange: visible ? "auto" : "opacity, transform",
-      }}
+      className={`${className} transition-all duration-700 ease-out ${
+        visible ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"
+      }`}
     >
       {children}
+    </div>
+  );
+}
+
+function Doodle({
+  type,
+  color,
+  className = "",
+}: {
+  type: number;
+  color: string;
+  className?: string;
+}) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      fill="none"
+      aria-hidden="true"
+      className={className}
+      style={{ color }}
+    >
+      {type % 5 === 0 && (
+        <>
+          <path d="M10 27 Q30 16 50 30 V80 Q30 66 10 78 Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M90 27 Q70 16 50 30 V80 Q70 66 90 78 Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M22 43 L38 46 M22 54 L38 57 M62 46 L78 43 M62 57 L78 54" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+        </>
+      )}
+      {type % 5 === 1 && (
+        <>
+          <path d="M14 22 H86 V64 H53 L34 81 V64 H14 Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M29 37 H71 M29 49 H60" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+          <circle cx="76" cy="78" r="8" fill="currentColor" />
+        </>
+      )}
+      {type % 5 === 2 && (
+        <>
+          <path d="M18 56 V43 A32 32 0 0 1 82 43 V56" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+          <rect x="13" y="48" width="19" height="30" rx="8" stroke="currentColor" strokeWidth="4" />
+          <rect x="68" y="48" width="19" height="30" rx="8" stroke="currentColor" strokeWidth="4" />
+          <path d="M68 75 Q60 89 45 84" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </>
+      )}
+      {type % 5 === 3 && (
+        <>
+          <path d="M24 74 L31 53 L66 18 Q73 11 81 19 Q88 26 80 33 L45 68 Z" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+          <path d="M31 53 L45 68 M66 18 L80 33" stroke="currentColor" strokeWidth="3" />
+          <path d="M15 19 L18 29 M10 25 L20 23 M77 79 L84 84" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+        </>
+      )}
+      {type % 5 === 4 && (
+        <>
+          <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="4" />
+          <path d="M39 40 Q50 29 61 40 M39 59 Q50 70 61 59" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+          <circle cx="40" cy="48" r="3" fill="currentColor" />
+          <circle cx="60" cy="48" r="3" fill="currentColor" />
+          <path d="M50 9 V16 M50 84 V91 M9 50 H16 M84 50 H91" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+        </>
+      )}
+    </svg>
+  );
+}
+
+function TopicOrb({ color, type }: { color: string; type: number }) {
+  return (
+    <div
+      className="relative flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-[25px] transition duration-500 group-hover:rotate-[-7deg] group-hover:scale-110 sm:h-[88px] sm:w-[88px]"
+      style={{
+        background: `linear-gradient(145deg, ${color}32, ${color}0A)`,
+        border: `1px solid ${color}45`,
+        boxShadow: `inset 0 0 25px ${color}12, 0 8px 25px ${color}12`,
+      }}
+    >
+      <div
+        className="absolute -right-2 -top-2 h-5 w-5 rounded-full border-4 border-[var(--surf)]"
+        style={{ backgroundColor: color }}
+      />
+      <Doodle type={type} color={color} className="h-12 w-12 sm:h-14 sm:w-14" />
     </div>
   );
 }
@@ -84,43 +137,33 @@ export function TopicFilterBar({
   onSelectTopic: (topic: string) => void;
 }) {
   return (
-    <section className="mx-auto max-w-[1380px] px-5 pb-16 sm:px-8 lg:px-10">
+    <section className="mx-auto max-w-[1380px] px-5 pb-12 sm:px-8 lg:px-10">
       <ScrollReveal>
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#3d9bff]">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#3d9bff]" />
+            <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#3D9BFF]">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[#3D9BFF]" />
               Explore topics
             </div>
-
             <h2 className="font-display text-4xl leading-tight tracking-[-0.04em] text-[var(--ink)] sm:text-5xl">
               Find your situation.
             </h2>
           </div>
-
-          <p className="max-w-[390px] font-sans text-sm leading-7 text-[var(--ink2)] sm:text-right">
+          <p className="max-w-[390px] text-sm leading-7 text-[var(--ink2)] sm:text-right">
             Choose a topic that matches your goals, or explore everything
             available across your English journey.
           </p>
         </div>
 
         <div className="flex gap-2 overflow-x-auto pb-3">
-          <ScrollReveal delay={0}>
+          <TopicButton label="All topics" active={!selectedTopic} onClick={onSelectAll} />
+          {topicOptions.map((topic) => (
             <TopicButton
-              label="All topics"
-              active={!selectedTopic}
-              onClick={onSelectAll}
+              key={topic}
+              label={topic}
+              active={selectedTopic === topic}
+              onClick={() => onSelectTopic(topic)}
             />
-          </ScrollReveal>
-
-          {topicOptions.map((topic, index) => (
-            <ScrollReveal key={topic} delay={index * 65}>
-              <TopicButton
-                label={topic}
-                active={selectedTopic === topic}
-                onClick={() => onSelectTopic(topic)}
-              />
-            </ScrollReveal>
           ))}
         </div>
       </ScrollReveal>
@@ -139,128 +182,173 @@ export function LessonLibrary({
   showAll: boolean;
   onToggleShowAll: () => void;
 }) {
-  const visibleLessons = showAll
-    ? filteredLessons
-    : filteredLessons.slice(0, 10);
+  const visibleLessons = showAll ? filteredLessons : filteredLessons.slice(0, 10);
 
   return (
-    <section className="mx-auto max-w-[1380px] px-5 pb-20 sm:px-8 lg:px-10">
+    <section className="mx-auto max-w-[1380px] overflow-hidden px-5 pb-20 sm:px-8 lg:px-10">
       <ScrollReveal>
-        <div className="border-t border-[var(--line)]">
-          <div className="flex flex-wrap items-center justify-between gap-3 py-6">
+        <div className="relative border-t border-[var(--line)]">
+          <div className="pointer-events-none absolute -left-24 top-40 h-72 w-72 rounded-full bg-[#3D9BFF]/10 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 top-[45%] h-72 w-72 rounded-full bg-[#8B5CF6]/10 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-20 left-[35%] h-60 w-60 rounded-full bg-[#10B981]/10 blur-3xl" />
+
+          <div className="relative flex flex-wrap items-center justify-between gap-3 py-6">
             <div>
               <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ink)]">
-                Lesson library
+                Your learning journey
               </span>
-
-              <span className="ml-3 font-mono text-[10px] text-[#3d9bff]">
+              <span className="ml-3 font-mono text-[10px] text-[#3D9BFF]">
                 {filteredLessons.length} lessons
               </span>
             </div>
-
             <span className="rounded-full border border-[var(--line)] bg-[var(--surf2)] px-3 py-2 font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink2)]">
               {selectedTopic ?? "All topics"}
             </span>
           </div>
 
-          <div className="divide-y divide-[var(--line)] border-y border-[var(--line)]">
-            {visibleLessons.map((lesson, index) => (
-              <ScrollReveal
-                key={lesson.id}
-                delay={(index % 5) * 65}
-                direction="right"
-              >
-                <Link
-                  href={lesson.href}
-                  className="group relative grid gap-3 overflow-hidden px-3 py-5 transition-colors duration-300 hover:bg-[var(--surf2)] sm:grid-cols-[60px_75px_1fr_auto] sm:items-center sm:gap-5 sm:px-5"
-                >
-                  <span
-                    className="absolute bottom-0 left-0 top-0 w-1 origin-bottom scale-y-0 transition-transform duration-300 group-hover:scale-y-100"
-                    style={{ backgroundColor: lesson.color }}
-                  />
+          <div className="relative">
+            {visibleLessons.length > 0 && (
+              <div className="absolute bottom-10 left-[19px] top-10 w-[3px] rounded-full bg-gradient-to-b from-[#3D9BFF] via-[#8B5CF6] via-50% to-[#10B981] sm:left-1/2 sm:-translate-x-1/2" />
+            )}
 
-                  <span className="font-mono text-xs text-[var(--ink2)] transition-colors group-hover:text-[#3d9bff]">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
+            <div className="space-y-6 sm:space-y-10">
+              {visibleLessons.map((lesson, index) => {
+                const color = lesson.color || palette[index % palette.length];
+                const left = index % 2 === 1;
 
-                  <span
-                    className="w-fit rounded-full border px-3 py-1.5 font-mono text-[9px] font-semibold uppercase tracking-[0.12em] transition-transform duration-300 group-hover:scale-105"
-                    style={{
-                      color: lesson.color,
-                      borderColor: `${lesson.color}55`,
-                      backgroundColor: `${lesson.color}12`,
-                    }}
-                  >
-                    {lesson.level}
-                  </span>
-
-                  <div>
-                    <div className="font-sans text-base font-semibold tracking-tight text-[var(--ink)] transition-colors duration-300 group-hover:text-[#3d9bff]">
-                      {lesson.title}
-                    </div>
-
-                    <div className="mt-1 max-w-2xl font-sans text-xs leading-6 text-[var(--ink2)]">
-                      {lesson.description}
-                    </div>
-
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {lesson.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="rounded-full bg-[var(--surf2)] px-2 py-1 font-mono text-[9px] text-[var(--ink2)] transition-colors duration-300 group-hover:bg-[var(--bg)]"
+                return (
+                  <ScrollReveal key={lesson.id}>
+                    <div className="relative grid grid-cols-[40px_minmax(0,1fr)] items-center gap-3 sm:grid-cols-[1fr_76px_1fr] sm:gap-5">
+                      <div className="relative z-10 flex justify-center sm:col-start-2 sm:row-start-1">
+                        <div
+                          className="flex h-10 w-10 items-center justify-center rounded-2xl border-[4px] border-[var(--bg)] font-mono text-[10px] font-bold text-white shadow-lg transition-transform duration-300 hover:scale-125 sm:h-12 sm:w-12"
+                          style={{
+                            backgroundColor: color,
+                            boxShadow: `0 0 0 5px ${color}18, 0 8px 22px ${color}45`,
+                          }}
                         >
-                          {tag}
-                        </span>
-                      ))}
+                          {String(index + 1).padStart(2, "0")}
+                        </div>
+                      </div>
+
+                      <Link
+                        href={lesson.href}
+                        className={`group relative min-w-0 overflow-hidden rounded-[27px] border p-5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl sm:p-7 ${
+                          left ? "sm:col-start-1 sm:row-start-1" : "sm:col-start-3 sm:row-start-1"
+                        }`}
+                        style={{
+                          borderColor: `${color}50`,
+                          background: `linear-gradient(135deg, ${color}1C 0%, var(--surf) 58%, ${color}0B 100%)`,
+                          boxShadow: `0 12px 40px ${color}0D`,
+                        }}
+                      >
+                        <div
+                          className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full blur-2xl transition-all duration-500 group-hover:scale-150"
+                          style={{ backgroundColor: `${color}20` }}
+                        />
+                        <div
+                          className="pointer-events-none absolute -bottom-10 left-1/3 h-24 w-24 rounded-full blur-2xl"
+                          style={{ backgroundColor: `${color}18` }}
+                        />
+                        <div
+                          className="absolute bottom-0 left-0 top-0 w-1 origin-bottom scale-y-0 transition-transform duration-300 group-hover:scale-y-100"
+                          style={{ backgroundColor: color }}
+                        />
+
+                        <div className="relative z-10 flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <div className="mb-3 flex flex-wrap items-center gap-2">
+                              <span
+                                className="rounded-full border px-3 py-1.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em]"
+                                style={{
+                                  color,
+                                  borderColor: `${color}65`,
+                                  backgroundColor: `${color}17`,
+                                }}
+                              >
+                                {lesson.level}
+                              </span>
+                              <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink2)]">
+                                CHAPTER {String(index + 1).padStart(2, "0")}
+                              </span>
+                            </div>
+                            <h3 className="text-lg font-bold tracking-tight text-[var(--ink)] transition-colors group-hover:text-[#3D9BFF] sm:text-2xl">
+                              {lesson.title}
+                            </h3>
+                          </div>
+                          <TopicOrb color={color} type={index} />
+                        </div>
+
+                        <p className="relative z-10 mt-4 text-xs leading-6 text-[var(--ink2)] sm:text-sm sm:leading-7">
+                          {lesson.description}
+                        </p>
+
+                        <div className="relative z-10 mt-4 flex flex-wrap gap-2">
+                          {lesson.tags.slice(0, 3).map((tag, tagIndex) => (
+                            <span
+                              key={tag}
+                              className="rounded-lg border px-2.5 py-1.5 text-[10px] font-medium"
+                              style={{
+                                color: tagIndex === 0 ? color : "var(--ink2)",
+                                borderColor: `${color}${tagIndex === 0 ? "40" : "20"}`,
+                                backgroundColor: `${color}${tagIndex === 0 ? "12" : "06"}`,
+                              }}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        <div
+                          className="relative z-10 mt-5 flex items-center justify-between border-t pt-4"
+                          style={{ borderColor: `${color}30` }}
+                        >
+                          <span className="rounded-full px-3 py-1.5 font-mono text-[10px]" style={{ color, backgroundColor: `${color}12` }}>
+                            ◷ {lesson.minutes} MIN
+                          </span>
+                          <span className="flex items-center gap-2 rounded-full px-4 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-white transition-all duration-300 group-hover:gap-4" style={{ backgroundColor: color }}>
+                            Start lesson <span className="text-base">→</span>
+                          </span>
+                        </div>
+                      </Link>
+
+                      <div className={`pointer-events-none absolute hidden sm:block ${left ? "right-[3%] top-1/2" : "left-[3%] top-1/2"}`}>
+                        <Doodle
+                          type={index + 2}
+                          color={color}
+                          className="h-20 w-20 opacity-45 transition duration-500 hover:rotate-12"
+                        />
+                      </div>
+
+                      <div
+                        className={`pointer-events-none absolute hidden h-3 w-3 rounded-full sm:block ${left ? "right-[15%] top-5" : "left-[15%] bottom-5"}`}
+                        style={{ backgroundColor: color, boxShadow: `0 0 22px ${color}` }}
+                      />
                     </div>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-5 sm:justify-end">
-                    <span className="font-mono text-[10px] text-[var(--ink2)]">
-                      <span className="text-[#3d9bff]">◷</span>{" "}
-                      {lesson.minutes} min
-                    </span>
-
-                    <span
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--line)] text-lg text-[var(--ink2)] transition-all duration-300 group-hover:translate-x-1 group-hover:border-[#3d9bff] group-hover:bg-[#3d9bff] group-hover:text-white"
-                      aria-hidden="true"
-                    >
-                      →
-                    </span>
-                  </div>
-                </Link>
-              </ScrollReveal>
-            ))}
+                  </ScrollReveal>
+                );
+              })}
+            </div>
 
             {filteredLessons.length === 0 && (
-              <ScrollReveal direction="up">
-                <div className="px-5 py-16 text-center">
-                  <div className="mb-3 text-3xl">🔎</div>
-
-                  <p className="font-display text-2xl text-[var(--ink)]">
-                    No lessons found
-                  </p>
-
-                  <p className="mt-2 text-sm text-[var(--ink2)]">
-                    Try choosing another topic.
-                  </p>
-                </div>
-              </ScrollReveal>
+              <div className="rounded-3xl border border-[var(--line)] bg-[var(--surf2)] px-5 py-16 text-center">
+                <Doodle type={0} color="#3D9BFF" className="mx-auto mb-4 h-16 w-16" />
+                <h3 className="font-display text-2xl text-[var(--ink)]">No lessons found</h3>
+                <p className="mt-2 text-sm text-[var(--ink2)]">Try choosing another topic.</p>
+              </div>
             )}
           </div>
 
           {filteredLessons.length > 10 && (
-            <ScrollReveal direction="up">
-              <div className="flex justify-center pt-8">
-                <button
-                  type="button"
-                  onClick={onToggleShowAll}
-                  className="group rounded-full border border-[var(--line)] bg-[var(--surf)] px-6 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ink)] transition-all duration-300 hover:-translate-y-1 hover:border-[#3d9bff] hover:bg-[#3d9bff] hover:text-white"
-                >
-                  {showAll ? "Show less ↑" : "Show all lessons ↓"}
-                </button>
-              </div>
-            </ScrollReveal>
+            <div className="flex justify-center pt-10">
+              <button
+                type="button"
+                onClick={onToggleShowAll}
+                className="rounded-full border border-[var(--line)] bg-[var(--surf)] px-6 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--ink)] transition-all duration-300 hover:-translate-y-1 hover:border-[#3D9BFF] hover:bg-[#3D9BFF] hover:text-white"
+              >
+                {showAll ? "Show less ↑" : "Show all lessons ↓"}
+              </button>
+            </div>
           )}
         </div>
       </ScrollReveal>
@@ -283,30 +371,27 @@ export function BottomCta({
 }) {
   return (
     <section className="mx-auto max-w-[1380px] px-5 pb-10 sm:px-8 lg:px-10">
-      <ScrollReveal direction="left">
-        <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[#0b1025] px-6 py-10 text-white shadow-2xl shadow-[#3d9bff]/10 sm:px-10 sm:py-12 lg:px-14">
-          <div className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-[#3d9bff]/15 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-[#6a52ee]/15 blur-3xl" />
-
+      <ScrollReveal>
+        <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[#0B1025] px-6 py-10 text-white shadow-2xl shadow-[#3D9BFF]/10 sm:px-10 sm:py-12 lg:px-14">
+          <div className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full bg-[#3D9BFF]/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 left-1/3 h-64 w-64 rounded-full bg-[#8B5CF6]/20 blur-3xl" />
+          <div className="pointer-events-none absolute -left-10 bottom-0 h-40 w-40 rounded-full bg-[#10B981]/10 blur-3xl" />
           <div className="pointer-events-none absolute -right-16 -top-20 h-72 w-72 rounded-full border border-white/10" />
           <div className="pointer-events-none absolute -right-4 -top-10 h-52 w-52 rounded-full border border-white/10" />
+          <Doodle type={0} color="#65B5FF" className="pointer-events-none absolute bottom-5 right-[28%] hidden h-24 w-24 opacity-20 md:block" />
 
           <div className="relative z-10 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
             <div className="max-w-[650px]">
-              <div className="mb-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#65b5ff]">
-                <span className="h-2 w-2 rounded-full bg-[#65b5ff]" />
+              <div className="mb-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#65B5FF]">
+                <span className="h-2 w-2 rounded-full bg-[#65B5FF]" />
                 Keep moving
               </div>
-
               <h2 className="font-display text-4xl leading-tight tracking-[-0.04em] text-white sm:text-6xl">
                 {selectedLevelInfo.title || "Keep learning."}
               </h2>
-
-              <p className="mt-4 max-w-[560px] font-sans text-sm leading-7 text-white/65">
-                {selectedLevelInfo.description ||
-                  "Build your English step by step through practical experiences."}
+              <p className="mt-4 max-w-[560px] text-sm leading-7 text-white/65">
+                {selectedLevelInfo.description || "Build your English step by step through practical experiences."}
               </p>
-
               <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.12em] text-white/40">
                 {selectedLevelInfo.subtitle}
               </p>
@@ -315,13 +400,7 @@ export function BottomCta({
             <div className="flex flex-wrap gap-2 lg:max-w-[390px] lg:justify-end">
               {levels.map((level, index) => {
                 const active = selectedLevel === level;
-                const colors = [
-                  "#3d9bff",
-                  "#0a9fbd",
-                  "#6a52ee",
-                  "#0e8f69",
-                  "#e17b53",
-                ];
+                const color = palette[index];
 
                 return (
                   <button
@@ -330,16 +409,10 @@ export function BottomCta({
                     onClick={() => onLevelChange(level)}
                     className={`rounded-full border px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.12em] transition-all duration-300 hover:-translate-y-1 ${
                       active
-                        ? "border-white bg-white text-[#0b1025] shadow-lg"
+                        ? "border-white bg-white text-[#0B1025]"
                         : "border-white/20 bg-white/5 text-white/65 hover:border-white/50 hover:text-white"
                     }`}
-                    style={
-                      active
-                        ? ({
-                            boxShadow: `0 0 24px ${colors[index]}55`,
-                          } as CSSProperties)
-                        : undefined
-                    }
+                    style={active ? { boxShadow: `0 0 24px ${color}70` } : undefined}
                   >
                     {level}
                   </button>
@@ -358,13 +431,9 @@ export function Footer() {
     <footer className="mx-auto flex max-w-[1380px] flex-col gap-5 border-t border-[var(--line)] px-5 pb-10 pt-7 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
       <div>
         <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.15em] text-[var(--ink)]">
-          LingoAI
-          <span className="ml-2 text-[#3d9bff]">/</span>
-          <span className="ml-2 text-[var(--ink2)]">
-            English learning system
-          </span>
+          LingoAI <span className="ml-2 text-[#3D9BFF]">/</span>
+          <span className="ml-2 text-[var(--ink2)]">English learning system</span>
         </div>
-
         <p className="mt-2 text-xs text-[var(--ink2)]">
           Every lesson brings you closer to confidence.
         </p>
@@ -379,7 +448,7 @@ export function Footer() {
           <Link
             key={item.href}
             href={item.href}
-            className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ink2)] transition-colors hover:text-[#3d9bff]"
+            className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ink2)] transition-colors hover:text-[#3D9BFF]"
           >
             {item.label}
           </Link>
